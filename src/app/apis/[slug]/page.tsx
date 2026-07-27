@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ApiDocumentation } from "@/components/api-detail/ApiDocumentation";
+import { RecommendationBanner } from "@/components/api-detail/RecommendationBanner";
 import { SecurityScoreBadge } from "@/components/api-detail/SecurityScoreBadge";
 import { TrustScoreBreakdownPanel } from "@/components/api-detail/TrustScoreBreakdown";
 import { ApiTester } from "@/components/tester/ApiTester";
@@ -32,6 +33,8 @@ export default async function ApiDetailPage({ params }: ApiDetailPageProps) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <RecommendationBanner api={api} />
+
       <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-sm font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
