@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import { ApiDocumentation } from "@/components/api-detail/ApiDocumentation";
 import { RecommendationBanner } from "@/components/api-detail/RecommendationBanner";
 import { SecurityScoreBadge } from "@/components/api-detail/SecurityScoreBadge";
+import { SourceAttribution } from "@/components/api-detail/SourceAttribution";
 import { TrustScoreBreakdownPanel } from "@/components/api-detail/TrustScoreBreakdown";
+import { TrustScoreDisclaimer } from "@/components/api-detail/TrustScoreDisclaimer";
 import { ApiTester } from "@/components/tester/ApiTester";
 import { getApiBySlug, getTrustScore } from "@/lib/api/client";
 
@@ -49,6 +51,9 @@ export default async function ApiDetailPage({ params }: ApiDetailPageProps) {
           <SecurityScoreBadge score={api.trustScore} />
         </div>
       </div>
+
+      <TrustScoreDisclaimer />
+      <SourceAttribution api={api} />
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <ApiDocumentation api={api} />

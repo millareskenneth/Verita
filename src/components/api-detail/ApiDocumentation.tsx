@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { EndpointList } from "@/components/api-detail/EndpointList";
+import { Badge } from "@/components/ui/Badge";
 import { formatAuthMethod, formatDate } from "@/lib/utils/format";
 import type { ApiCatalogEntry } from "@/types/api";
 
@@ -16,7 +15,6 @@ export function ApiDocumentation({ api }: ApiDocumentationProps) {
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
             <Badge>{api.category}</Badge>
-            <Badge variant="muted">{api.license}</Badge>
             <Badge variant={api.freeStatus === "free" ? "success" : "warning"}>
               {api.freeStatus.replace("-", " ")}
             </Badge>
@@ -35,19 +33,6 @@ export function ApiDocumentation({ api }: ApiDocumentationProps) {
               <dt className="text-sm font-medium text-zinc-500">Authentication</dt>
               <dd className="mt-1 text-sm text-zinc-900 dark:text-zinc-100">
                 {formatAuthMethod(api.authMethod)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-medium text-zinc-500">Source</dt>
-              <dd className="mt-1 text-sm">
-                <Link
-                  href={api.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald-700 hover:underline dark:text-emerald-400"
-                >
-                  View repository
-                </Link>
               </dd>
             </div>
             <div>
