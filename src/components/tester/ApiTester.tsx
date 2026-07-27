@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { ResponseViewer } from "@/components/tester/ResponseViewer";
 import { CodeSnippetPanel } from "@/components/tester/CodeSnippetPanel";
+import { API_BASE_URL } from "@/lib/constants/config";
 import type { ApiCatalogEntry } from "@/types/api";
 
 interface ApiTesterProps {
@@ -51,6 +52,53 @@ function resolveRequestPath(api: ApiCatalogEntry, path: string): string {
   return path.replace(`{${pathParam.name}}`, pathParam.example);
 }
 
+async function sendDirectRequest(
+  requestUrl: string,
+  apiKey: string,
+): Promise<TestResponse> {
+  const headers: HeadersInit = {};
+  if (apiKey.trim()) {
+    headers["x-api-key"] = apiKey.trim();
+  }
+
+  const started = performance.now();
+  const result = await fetch(requestUrl, { headers });
+  const body = await result.text();
+
+  return {
+    status: result.status,
+    latencyMs: Math.round(performance.now() - started),
+    body,
+  };
+}
+
+async function sendProxyRequest(
+  api: ApiCatalogEntry,
+  path: string,
+  query: string,
+  apiKey: string,
+): Promise<TestResponse> {
+  const params = new URLSearchParams({ path });
+  if (query.trim()) params.set("query", query.trim());
+  if (apiKey.trim()) params.set("apiKey", apiKey.trim());
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/catalog/${api.slug}/test?${params.toString()}`,
+  );
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(detail || `Proxy request failed: ${response.status}`);
+  }
+
+  const data = (await response.json()) as TestResponse;
+  return {
+    status: data.status,
+    latencyMs: data.latencyMs,
+    body: data.body,
+  };
+}
+
 export function ApiTester({ api }: ApiTesterProps) {
   const [path, setPath] = useState(() => buildPathExample(api));
   const [query, setQuery] = useState(() => buildDefaultQuery(api));
@@ -58,42 +106,41 @@ export function ApiTester({ api }: ApiTesterProps) {
   const [response, setResponse] = useState<TestResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [viaProxy, setViaProxy] = useState(false);
+
+  const resolvedPath = useMemo(
+    () => resolveRequestPath(api, path),
+    [api, path],
+  );
 
   const requestUrl = useMemo(() => {
-    const resolvedPath = resolveRequestPath(api, path);
     const normalizedPath = resolvedPath.startsWith("/")
       ? resolvedPath
       : `/${resolvedPath}`;
     const base = `${api.baseUrl}${normalizedPath.split("?")[0]}`;
     return query.trim() ? `${base}?${query.trim()}` : base;
-  }, [api, path, query]);
+  }, [api.baseUrl, query, resolvedPath]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
-
-    const started = performance.now();
+    setViaProxy(false);
 
     try {
-      const headers: HeadersInit = {};
-      if (api.authMethod === "api-key" && apiKey.trim()) {
-        headers["x-api-key"] = apiKey.trim();
+      try {
+        const direct = await sendDirectRequest(requestUrl, apiKey);
+        setResponse(direct);
+      } catch {
+        const proxied = await sendProxyRequest(api, resolvedPath, query, apiKey);
+        setResponse(proxied);
+        setViaProxy(true);
       }
-
-      const result = await fetch(requestUrl, { headers });
-      const body = await result.text();
-
-      setResponse({
-        status: result.status,
-        latencyMs: Math.round(performance.now() - started),
-        body,
-      });
-    } catch {
+    } catch (proxyError) {
       setError(
-        api.authMethod === "api-key"
-          ? "This API usually blocks direct browser requests (CORS or auth). Use the code snippets below in your app, or wait for the Phase 2 backend proxy."
-          : "Direct browser requests failed (likely CORS). Open-Meteo and REST Countries usually work from the browser; others may need the Phase 2 backend proxy.",
+        proxyError instanceof Error
+          ? proxyError.message
+          : "Both direct and proxy requests failed. Check the backend is running.",
       );
       setResponse(null);
     } finally {
@@ -109,8 +156,8 @@ export function ApiTester({ api }: ApiTesterProps) {
             Try it now
           </h2>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            MVP supports GET requests from the browser. Copied snippets always
-            point to the original API.
+            Sends a GET request directly when CORS allows it, otherwise routes
+            through the Verita backend proxy.
           </p>
         </div>
 
@@ -146,6 +193,13 @@ export function ApiTester({ api }: ApiTesterProps) {
             {isLoading ? "Sending..." : "Send request"}
           </Button>
         </form>
+
+        {viaProxy ? (
+          <p className="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-200">
+            Request routed through the Verita backend proxy (direct browser call
+            was blocked by CORS).
+          </p>
+        ) : null}
 
         {error ? (
           <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
