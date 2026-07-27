@@ -18,20 +18,55 @@ interface TestResponse {
   body: string;
 }
 
+function buildDefaultPath(api: ApiCatalogEntry): string {
+  return api.endpoints[0]?.path ?? "/";
+}
+
+function buildDefaultQuery(api: ApiCatalogEntry): string {
+  const endpoint = api.endpoints[0];
+  if (!endpoint?.parameters?.length) return "";
+
+  return endpoint.parameters
+    .filter((param) => param.in === "query" && param.example)
+    .map((param) => `${param.name}=${param.example}`)
+    .join("&");
+}
+
+function buildPathExample(api: ApiCatalogEntry): string {
+  const endpoint = api.endpoints[0];
+  const pathParam = endpoint?.parameters?.find((param) => param.in === "path");
+  if (!endpoint || !pathParam?.example) return buildDefaultPath(api);
+
+  return endpoint.path.replace(`{${pathParam.name}}`, pathParam.example);
+}
+
+function resolveRequestPath(api: ApiCatalogEntry, path: string): string {
+  const endpoint = api.endpoints.find((item) => item.path === path.split("?")[0]);
+  const pathParam = endpoint?.parameters?.find((param) => param.in === "path");
+
+  if (!pathParam?.example || !path.includes("{")) {
+    return path;
+  }
+
+  return path.replace(`{${pathParam.name}}`, pathParam.example);
+}
+
 export function ApiTester({ api }: ApiTesterProps) {
-  const defaultEndpoint = api.endpoints[0];
-  const [path, setPath] = useState(defaultEndpoint?.path ?? "/");
-  const [query, setQuery] = useState("latitude=52.52&longitude=13.41");
+  const [path, setPath] = useState(() => buildPathExample(api));
+  const [query, setQuery] = useState(() => buildDefaultQuery(api));
   const [apiKey, setApiKey] = useState("");
   const [response, setResponse] = useState<TestResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const requestUrl = useMemo(() => {
-    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-    const base = `${api.baseUrl}${normalizedPath}`;
+    const resolvedPath = resolveRequestPath(api, path);
+    const normalizedPath = resolvedPath.startsWith("/")
+      ? resolvedPath
+      : `/${resolvedPath}`;
+    const base = `${api.baseUrl}${normalizedPath.split("?")[0]}`;
     return query.trim() ? `${base}?${query.trim()}` : base;
-  }, [api.baseUrl, path, query]);
+  }, [api, path, query]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,7 +91,9 @@ export function ApiTester({ api }: ApiTesterProps) {
       });
     } catch {
       setError(
-        "Direct browser requests may fail due to CORS. Phase 2 will route sandboxed tests through the backend proxy.",
+        api.authMethod === "api-key"
+          ? "This API usually blocks direct browser requests (CORS or auth). Use the code snippets below in your app, or wait for the Phase 2 backend proxy."
+          : "Direct browser requests failed (likely CORS). Open-Meteo and REST Countries usually work from the browser; others may need the Phase 2 backend proxy.",
       );
       setResponse(null);
     } finally {
