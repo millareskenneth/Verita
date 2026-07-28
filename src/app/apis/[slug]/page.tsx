@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { ApiDocumentation } from "@/components/api-detail/ApiDocumentation";
+import { apiPageShellClass } from "@/lib/layout/site-shell";
 import { RecommendationBanner } from "@/components/api-detail/RecommendationBanner";
 import { SecurityScoreBadge } from "@/components/api-detail/SecurityScoreBadge";
-import { SourceAttribution } from "@/components/api-detail/SourceAttribution";
 import { TrustScoreBreakdownPanel } from "@/components/api-detail/TrustScoreBreakdown";
 import { TrustScoreDisclaimer } from "@/components/api-detail/TrustScoreDisclaimer";
 import { ApiTester } from "@/components/tester/ApiTester";
@@ -34,33 +34,40 @@ export default async function ApiDetailPage({ params }: ApiDetailPageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div className={apiPageShellClass}>
       <RecommendationBanner api={api} />
 
-      <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-medium uppercase tracking-wide text-primary">
             {api.category}
           </p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight">{api.name}</h1>
-          <p className="mt-3 max-w-3xl text-lg text-zinc-600 dark:text-zinc-400">
+          <h1 className="mt-1 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {api.name}
+          </h1>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
             {api.description}
           </p>
         </div>
-        <div className="w-full max-w-xs">
-          <SecurityScoreBadge score={api.trustScore} />
-        </div>
+        <SecurityScoreBadge score={api.trustScore} inline />
       </div>
 
-      <TrustScoreDisclaimer />
-      <SourceAttribution api={api} />
+      <div className="mb-4">
+        <TrustScoreDisclaimer />
+      </div>
 
-      <div className="grid gap-8 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <ApiDocumentation api={api} />
-        <div className="space-y-8">
-          <ApiTester api={api} />
+      {/* Independent columns — each stack grows with its own content, no shared row heights */}
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:gap-6">
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
+          <ApiDocumentation api={api} />
           {trustScore ? <TrustScoreBreakdownPanel breakdown={trustScore} /> : null}
         </div>
+
+        <aside className="min-w-0 xl:w-[min(100%,26rem)] xl:shrink-0">
+          <div className="xl:sticky xl:top-[4.5rem]">
+            <ApiTester api={api} />
+          </div>
+        </aside>
       </div>
     </div>
   );

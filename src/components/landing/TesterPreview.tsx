@@ -28,8 +28,6 @@ const DEMO_RESPONSE = `{
   }
 }`;
 
-const EDITOR_HEIGHT = "320px";
-
 const panelHeaderClass =
   "flex h-11 shrink-0 items-center justify-between gap-2 border-b border-border px-3 sm:px-4";
 
@@ -71,7 +69,13 @@ function getColorSchemeServerSnapshot() {
   return false;
 }
 
-export function TesterPreview() {
+export function TesterPreview({
+  className,
+  editorHeight = "320px",
+}: {
+  className?: string;
+  editorHeight?: string;
+}) {
   const isDark = useSyncExternalStore(
     subscribeToColorScheme,
     getColorSchemeSnapshot,
@@ -82,7 +86,7 @@ export function TesterPreview() {
   const wrapExtension = EditorView.lineWrapping;
 
   return (
-    <div className="relative min-w-0 w-full">
+    <div className={cn("relative min-w-0 w-full", className)}>
       <div className="absolute -inset-2 rounded-3xl bg-primary/10 blur-3xl" />
       <div className="relative w-full min-w-0 overflow-hidden rounded-2xl border border-border/80 bg-card shadow-2xl shadow-primary/5">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/40 px-3 py-3 sm:px-4">
@@ -112,7 +116,7 @@ export function TesterPreview() {
             </div>
             <CodeMirror
               value={DEMO_REQUEST}
-              height={EDITOR_HEIGHT}
+              height={editorHeight}
               theme={editorTheme}
               extensions={[wrapExtension, editorTypography]}
               editable={false}
@@ -143,7 +147,7 @@ export function TesterPreview() {
             </div>
             <CodeMirror
               value={DEMO_RESPONSE}
-              height={EDITOR_HEIGHT}
+              height={editorHeight}
               theme={editorTheme}
               extensions={[json(), wrapExtension, editorTypography]}
               editable={false}

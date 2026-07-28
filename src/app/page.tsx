@@ -9,11 +9,13 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <FeaturedApisSection />
-      <CategoriesSection />
-      <CtaSection />
+      <div id="landing-content">
+        <FeaturesSection />
+        <HowItWorksSection />
+        <FeaturedApisSection />
+        <CategoriesSection />
+        <CtaSection />
+      </div>
     </>
   );
 }

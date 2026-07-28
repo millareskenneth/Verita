@@ -63,9 +63,9 @@ export function ApiCard({ api }: ApiCardProps) {
           isFlagged && "border-amber-300 dark:border-amber-800",
         )}
       >
-        <div className="h-28 border-b border-border/60 bg-gradient-to-br from-primary/12 via-primary/5 to-transparent" />
+        <div className="h-16 border-b border-border/60 bg-gradient-to-br from-primary/12 via-primary/5 to-transparent" />
 
-        <CardHeader className="gap-3 px-5 pt-4 pb-0">
+        <CardHeader className="gap-2 px-4 pt-3 pb-0">
           <div className="flex items-start justify-between gap-3">
             <CardTitle className="font-display text-lg leading-snug group-hover:text-primary">
               {api.name}
@@ -83,11 +83,11 @@ export function ApiCard({ api }: ApiCardProps) {
           </Badge>
         </CardHeader>
 
-        <CardContent className="px-5 pt-3 pb-0">
-          <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+        <CardContent className="px-4 pt-2 pb-0">
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {api.description}
           </p>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             {buildSummary(api)}
           </p>
 
@@ -98,7 +98,7 @@ export function ApiCard({ api }: ApiCardProps) {
           ) : null}
         </CardContent>
 
-        <CardFooter className="mt-4 flex items-start justify-between gap-4 border-t px-5 py-4">
+        <CardFooter className="mt-3 flex items-start justify-between gap-3 border-t px-4 py-3">
           {stats.map((stat) => (
             <div key={stat.label} className="min-w-0 flex-1">
               <p className="text-xs text-muted-foreground">{stat.label}</p>

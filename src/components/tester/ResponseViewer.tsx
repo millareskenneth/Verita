@@ -18,20 +18,16 @@ export function ResponseViewer({ response }: ResponseViewerProps) {
   }
 
   return (
-    <Card>
-      <div className="mb-4 flex flex-wrap items-center gap-4 text-sm">
-        <span className="font-medium text-zinc-700 dark:text-zinc-300">
-          Status:{" "}
-          <span className="text-zinc-950 dark:text-zinc-50">{response.status}</span>
+    <Card className="min-w-0 overflow-hidden">
+      <div className="mb-2 flex flex-wrap items-center gap-3 text-xs">
+        <span className="font-medium text-muted-foreground">
+          Status: <span className="text-foreground">{response.status}</span>
         </span>
-        <span className="font-medium text-zinc-700 dark:text-zinc-300">
-          Latency:{" "}
-          <span className="text-zinc-950 dark:text-zinc-50">
-            {response.latencyMs} ms
-          </span>
+        <span className="font-medium text-muted-foreground">
+          Latency: <span className="text-foreground">{response.latencyMs} ms</span>
         </span>
       </div>
-      <pre className="max-h-96 overflow-auto rounded-lg bg-zinc-950 p-4 text-sm text-zinc-100">
+      <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-all rounded-md border border-border bg-muted p-3 text-xs text-foreground">
         {formattedBody}
       </pre>
     </Card>

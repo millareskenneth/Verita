@@ -6,40 +6,34 @@ interface EndpointListProps {
 
 export function EndpointList({ endpoints }: EndpointListProps) {
   return (
-    <section className="space-y-4">
-      <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-        Endpoints
-      </h2>
+    <section className="space-y-2">
+      <h2 className="text-sm font-semibold text-foreground">Endpoints</h2>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {endpoints.map((endpoint) => (
           <div
             key={`${endpoint.method}-${endpoint.path}`}
-            className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
+            className="min-w-0 rounded-lg border border-border bg-card px-3 py-2.5"
           >
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-semibold text-white dark:bg-zinc-100 dark:text-zinc-900">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <span className="shrink-0 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold uppercase text-primary-foreground">
                 {endpoint.method}
               </span>
-              <code className="text-sm text-zinc-800 dark:text-zinc-200">
+              <code className="min-w-0 break-all text-xs text-foreground">
                 {endpoint.path}
               </code>
             </div>
             {endpoint.description ? (
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                {endpoint.description}
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{endpoint.description}</p>
             ) : null}
             {endpoint.parameters?.length ? (
-              <ul className="mt-3 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+              <ul className="mt-1.5 space-y-0.5 text-xs text-muted-foreground">
                 {endpoint.parameters.map((parameter) => (
-                  <li key={parameter.name}>
-                    <span className="font-medium text-zinc-800 dark:text-zinc-200">
-                      {parameter.name}
-                    </span>{" "}
+                  <li key={parameter.name} className="break-words">
+                    <span className="font-medium text-foreground">{parameter.name}</span>{" "}
                     ({parameter.in}
-                    {parameter.required ? ", required" : ""})
-                    {parameter.example ? ` · e.g. ${parameter.example}` : ""}
+                    {parameter.required ? ", req" : ""})
+                    {parameter.example ? ` · ${parameter.example}` : ""}
                   </li>
                 ))}
               </ul>

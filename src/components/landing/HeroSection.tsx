@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, ChevronDown, Search } from "lucide-react";
 import { FormEvent, useState } from "react";
 
-import { landingShellClass } from "@/components/landing/landing-shell";
+import { landingShellClass } from "@/lib/layout/site-shell";
 import { TesterPreview } from "@/components/landing/TesterPreview";
 import { Button } from "@/components/ui/shadcn/button";
 import { Input } from "@/components/ui/shadcn/input";
@@ -23,13 +23,19 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative overflow-hidden border-b border-border">
+    <section
+      className={cn(
+        "relative overflow-hidden border-b border-border",
+        "lg:flex lg:min-h-[calc(100dvh-3.75rem)] lg:flex-col lg:justify-center",
+      )}
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--color-primary)/0.15,transparent)]" />
 
       <div
         className={cn(
           landingShellClass,
-          "relative grid gap-8 py-12 lg:grid-cols-2 lg:items-center lg:gap-10 lg:py-16",
+          "relative grid w-full gap-8 py-10 sm:py-12",
+          "lg:grid-cols-2 lg:items-center lg:gap-10 lg:py-8",
         )}
       >
         <div className="min-w-0">
@@ -89,8 +95,16 @@ export function HeroSection() {
           </dl>
         </div>
 
-        <TesterPreview />
+        <TesterPreview className="lg:max-h-[min(520px,calc(100dvh-8rem))]" editorHeight="280px" />
       </div>
+
+      <a
+        href="#landing-content"
+        className="absolute bottom-5 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground lg:flex"
+      >
+        <span>Scroll to explore</span>
+        <ChevronDown className="size-4 animate-bounce" />
+      </a>
     </section>
   );
 }

@@ -13,7 +13,7 @@ export function RecommendationBanner({ api }: RecommendationBannerProps) {
 
   return (
     <div
-      className={`mb-8 rounded-xl border px-4 py-4 sm:px-5 ${
+      className={`mb-4 rounded-lg border px-3 py-2.5 sm:px-4 ${
         isDelisted
           ? "border-red-300 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950/40 dark:text-red-100"
           : "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100"

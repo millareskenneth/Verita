@@ -1,4 +1,4 @@
-import { landingShellClass } from "@/components/landing/landing-shell";
+import { landingShellClass } from "@/lib/layout/site-shell";
 import Link from "next/link";
 
 import { Logo } from "@/components/brand/Logo";
