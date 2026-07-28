@@ -20,10 +20,20 @@ export interface SecurityCheck {
 
 export type TrustLabel = "High" | "Medium" | "Low";
 
+export interface Phase2TrustMetrics {
+  compositeScore: number;
+  popularityScore: number;
+  freshnessScore: number;
+  triangulationBoost: number;
+  sourceCount: number;
+}
+
 export interface TrustScoreBreakdown {
   overall: number;
   riskLevel: RiskLevel;
   trustLabel: TrustLabel;
+  scoringPhase?: 1 | 2;
+  phase2?: Phase2TrustMetrics;
   checks: SecurityCheck[];
   lastScannedAt: string;
 }

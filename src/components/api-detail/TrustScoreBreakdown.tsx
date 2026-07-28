@@ -106,6 +106,14 @@ export function TrustScoreBreakdownPanel({ breakdown }: TrustScoreBreakdownProps
           {new Date(breakdown.lastScannedAt).toLocaleDateString()}. Expand a check to view test
           proof.
         </p>
+        {breakdown.phase2 ? (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Composite score {breakdown.phase2.compositeScore}
+            {breakdown.phase2.sourceCount > 1
+              ? ` · ${breakdown.phase2.sourceCount} discovery sources`
+              : null}
+          </p>
+        ) : null}
       </div>
 
       <ul className="grid gap-2 sm:grid-cols-2">
