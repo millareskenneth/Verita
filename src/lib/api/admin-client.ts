@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/constants/config";
+import { ADMIN_DEV_BYPASS } from "@/lib/auth/admin-dev-bypass";
 import {
   clearAdminToken,
   getAdminToken,
@@ -17,7 +18,16 @@ export interface AdminLoginResult {
   role: string;
 }
 
-export async function loginAdmin(adminKey: string): Promise<AdminLoginResult> {
+export async function loginAdmin(adminKey: string = ""): Promise<AdminLoginResult> {
+  if (ADMIN_DEV_BYPASS && !adminKey.trim()) {
+    return {
+      accessToken: "",
+      tokenType: "bearer",
+      expiresAt: "",
+      role: "admin",
+    };
+  }
+
   const response = await fetch(`${API_BASE_URL}/api/admin/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,11 +39,17 @@ export async function loginAdmin(adminKey: string): Promise<AdminLoginResult> {
   }
 
   const data = (await response.json()) as AdminLoginResult;
-  setAdminToken(data.accessToken);
+  if (data.accessToken) {
+    setAdminToken(data.accessToken);
+  }
   return data;
 }
 
 export async function fetchAdminSession(): Promise<AdminSession> {
+  if (ADMIN_DEV_BYPASS && !getAdminToken()) {
+    return { authenticated: true, role: "admin" };
+  }
+
   const response = await adminFetch("/api/admin/auth/me");
   if (!response.ok) {
     throw new Error("Admin session expired");

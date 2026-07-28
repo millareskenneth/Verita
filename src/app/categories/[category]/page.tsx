@@ -20,15 +20,17 @@ export async function generateStaticParams() {
   return API_CATEGORIES.map((category) => ({ category: category.slug }));
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { category } = await params;
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, Number(pageParam ?? "1") || 1);
   const categoryMeta = API_CATEGORIES.find((item) => item.slug === category);
 
   if (!categoryMeta) {
     notFound();
   }
 
-  const result = await searchApis({ category, limit: 12 });
+  const result = await searchApis({ category, page, limit: PAGE_SIZE });
 
   return (
     <div className={apiPageShellClass}>

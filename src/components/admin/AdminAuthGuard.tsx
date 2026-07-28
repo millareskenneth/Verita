@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchAdminSession } from "@/lib/api/admin-client";
+import { ADMIN_DEV_BYPASS } from "@/lib/auth/admin-dev-bypass";
 import { getAdminToken } from "@/lib/auth/admin-session";
 
 interface AdminAuthGuardProps {
@@ -14,6 +15,11 @@ export function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (ADMIN_DEV_BYPASS) {
+      setReady(true);
+      return;
+    }
+
     const token = getAdminToken();
     if (!token) {
       router.replace("/admin/login");
