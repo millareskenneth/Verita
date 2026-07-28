@@ -16,6 +16,8 @@ export interface SecurityCheck {
   status: SecurityCheckStatus;
   detail?: string;
   evidence?: SecurityCheckEvidence;
+  sslGrade?: string;
+  sslGradeNormalized?: number;
 }
 
 export type TrustLabel = "High" | "Medium" | "Low";

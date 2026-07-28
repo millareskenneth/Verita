@@ -51,6 +51,11 @@ function SecurityCheckRow({ check }: { check: SecurityCheck }) {
           {check.detail ? (
             <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{check.detail}</p>
           ) : null}
+          {check.id === "ssl" && check.sslGrade ? (
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              SSL Labs grade: {check.sslGrade}
+            </p>
+          ) : null}
         </div>
         <Badge variant={STATUS_VARIANT[check.status]}>{check.status}</Badge>
       </button>
