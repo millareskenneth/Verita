@@ -9,7 +9,7 @@ interface CodeSnippetPanelProps {
 
 const SNIPPET_TABS = [
   { id: "curl", label: "cURL" },
-  { id: "fetch", label: "JavaScript" },
+  { id: "fetch", label: "JS" },
   { id: "python", label: "Python" },
 ] as const;
 
@@ -18,7 +18,7 @@ type SnippetTab = (typeof SNIPPET_TABS)[number]["id"];
 function buildSnippet(tab: SnippetTab, url: string) {
   switch (tab) {
     case "fetch":
-      return `const response = await fetch("${url}");\nconst data = await response.json();\nconsole.log(data);`;
+      return `const response = await fetch("${url}");\nconst data = await response.json();`;
     case "python":
       return `import requests\n\nresponse = requests.get("${url}")\nprint(response.json())`;
     default:
@@ -31,26 +31,34 @@ export function CodeSnippetPanel({ url }: CodeSnippetPanelProps) {
   const snippet = useMemo(() => buildSnippet(activeTab, url), [activeTab, url]);
 
   return (
-    <Card>
-      <div className="mb-4 flex flex-wrap gap-2">
-        {SNIPPET_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "bg-emerald-600 text-white"
-                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-      <pre className="overflow-x-auto rounded-lg bg-zinc-950 p-4 text-sm text-zinc-100">
-        {snippet}
-      </pre>
-    </Card>
+    <details className="group">
+      <summary className="cursor-pointer list-none text-sm font-medium text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="text-xs transition-transform group-open:rotate-90">▶</span>
+          Code snippets
+        </span>
+      </summary>
+      <Card className="mt-2 min-w-0 overflow-hidden">
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {SNIPPET_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                activeTab === tab.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <pre className="max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-md border border-border bg-muted p-3 text-xs text-foreground">
+          {snippet}
+        </pre>
+      </Card>
+    </details>
   );
 }

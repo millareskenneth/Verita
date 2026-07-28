@@ -12,14 +12,14 @@ export function ApiGrid({
 }: ApiGridProps) {
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-zinc-300 px-6 py-16 text-center text-zinc-500 dark:border-zinc-700">
+      <div className="rounded-2xl border border-dashed border-border px-6 py-16 text-center text-muted-foreground">
         {emptyMessage}
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {items.map((api) => (
         <ApiCard key={api.id} api={api} />
       ))}

@@ -1,20 +1,23 @@
 import Link from "next/link";
 import { API_CATEGORIES } from "@/lib/constants/categories";
+import { cn } from "@/lib/utils";
 
 interface CategoryFilterProps {
   activeCategory?: string;
 }
+
+const inactiveClass =
+  "bg-secondary text-secondary-foreground hover:bg-secondary/80";
 
 export function CategoryFilter({ activeCategory }: CategoryFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
       <Link
         href="/apis"
-        className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-          !activeCategory
-            ? "bg-emerald-600 text-white"
-            : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-        }`}
+        className={cn(
+          "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+          !activeCategory ? "bg-primary text-primary-foreground" : inactiveClass,
+        )}
       >
         All
       </Link>
@@ -25,11 +28,10 @@ export function CategoryFilter({ activeCategory }: CategoryFilterProps) {
           <Link
             key={category.slug}
             href={`/categories/${category.slug}`}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-              isActive
-                ? "bg-emerald-600 text-white"
-                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-            }`}
+            className={cn(
+              "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+              isActive ? "bg-primary text-primary-foreground" : inactiveClass,
+            )}
           >
             {category.label}
           </Link>

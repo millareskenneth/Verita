@@ -9,13 +9,11 @@ export function Select({ label, options, className = "", id, ...props }: SelectP
   return (
     <label className="block space-y-1.5">
       {label ? (
-        <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {label}
-        </span>
+        <span className="text-sm font-medium text-foreground">{label}</span>
       ) : null}
       <select
         id={selectId}
-        className={`w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-emerald-500 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 ${className}`}
+        className={`w-full min-w-0 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring focus:ring-2 ${className}`}
         {...props}
       >
         {options.map((option) => (

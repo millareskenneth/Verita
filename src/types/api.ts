@@ -7,7 +7,12 @@ export type LicenseType =
 
 export type AuthMethod = "none" | "api-key" | "oauth" | "basic";
 
-export type FreeStatus = "free" | "free-tier" | "under-review" | "delisted";
+export type FreeStatus =
+  | "free"
+  | "free-tier"
+  | "under-review"
+  | "quarantined"
+  | "delisted";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -45,6 +50,7 @@ export interface ApiCatalogEntry {
   sourceUrl: string;
   freeStatus: FreeStatus;
   trustScore: number;
+  recommendationWarning?: string;
   documentationCompleteness: number;
   popularity: number;
   lastUpdated: string;
