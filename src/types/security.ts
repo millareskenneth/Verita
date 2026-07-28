@@ -18,9 +18,12 @@ export interface SecurityCheck {
   evidence?: SecurityCheckEvidence;
 }
 
+export type TrustLabel = "High" | "Medium" | "Low";
+
 export interface TrustScoreBreakdown {
   overall: number;
   riskLevel: RiskLevel;
+  trustLabel: TrustLabel;
   checks: SecurityCheck[];
   lastScannedAt: string;
 }

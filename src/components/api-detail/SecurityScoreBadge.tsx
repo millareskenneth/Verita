@@ -1,12 +1,20 @@
 import { Badge } from "@/components/ui/Badge";
+import type { TrustLabel } from "@/types/security";
 
 interface SecurityScoreBadgeProps {
   score: number;
+  trustLabel?: TrustLabel;
   compact?: boolean;
   inline?: boolean;
 }
 
-function getRiskLabel(score: number) {
+function getRiskLabel(score: number, trustLabel?: TrustLabel) {
+  if (trustLabel) {
+    const variant =
+      trustLabel === "High" ? "success" : trustLabel === "Medium" ? "warning" : "danger";
+    return { label: `${trustLabel} trust`, variant: variant as "success" | "warning" | "danger" };
+  }
+
   if (score >= 85) return { label: "High trust", variant: "success" as const };
   if (score >= 70) return { label: "Medium trust", variant: "warning" as const };
   return { label: "Low trust", variant: "danger" as const };
@@ -14,10 +22,11 @@ function getRiskLabel(score: number) {
 
 export function SecurityScoreBadge({
   score,
+  trustLabel,
   compact = false,
   inline = false,
 }: SecurityScoreBadgeProps) {
-  const risk = getRiskLabel(score);
+  const risk = getRiskLabel(score, trustLabel);
 
   if (compact) {
     return (

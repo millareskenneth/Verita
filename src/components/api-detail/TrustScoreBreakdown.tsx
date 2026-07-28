@@ -102,8 +102,9 @@ export function TrustScoreBreakdownPanel({ breakdown }: TrustScoreBreakdownProps
       <div className="mb-3">
         <h2 className="text-sm font-semibold text-foreground">Security breakdown</h2>
         <p className="text-xs text-muted-foreground">
-          Scanned {new Date(breakdown.lastScannedAt).toLocaleDateString()} — expand a check to
-          view test proof
+          {breakdown.trustLabel} trust — scanned{" "}
+          {new Date(breakdown.lastScannedAt).toLocaleDateString()}. Expand a check to view test
+          proof.
         </p>
       </div>
 

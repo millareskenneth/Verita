@@ -49,7 +49,11 @@ export default async function ApiDetailPage({ params }: ApiDetailPageProps) {
             {api.description}
           </p>
         </div>
-        <SecurityScoreBadge score={api.trustScore} inline />
+        <SecurityScoreBadge
+          score={trustScore?.overall ?? api.trustScore}
+          trustLabel={trustScore?.trustLabel}
+          inline
+        />
       </div>
 
       <div className="mb-4">

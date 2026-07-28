@@ -708,9 +708,13 @@ export function getMockTrustScore(slug: string): TrustScoreBreakdown | null {
 
   const testedAt = "2026-07-20T08:00:00.000Z";
 
+  const trustLabel =
+    api.trustScore >= 85 ? "High" : api.trustScore >= 70 ? "Medium" : "Low";
+
   return {
     overall: api.trustScore,
     riskLevel: api.trustScore >= 85 ? "low" : api.trustScore >= 70 ? "medium" : "high",
+    trustLabel,
     lastScannedAt: testedAt,
     checks: [
       {
@@ -720,18 +724,6 @@ export function getMockTrustScore(slug: string): TrustScoreBreakdown | null {
         detail: "Connect to the Verita backend for live TLS verification",
         evidence: {
           method: "TLS certificate handshake",
-          testedAt,
-          findings: ["Mock catalog data — live proof requires the security API"],
-        },
-      },
-      {
-        id: "host",
-        label: "Hostname validation",
-        status: "unknown",
-        detail: "Connect to the Verita backend for live DNS verification",
-        evidence: {
-          method: "DNS hostname resolution",
-          target: api.baseUrl,
           testedAt,
           findings: ["Mock catalog data — live proof requires the security API"],
         },
@@ -759,6 +751,30 @@ export function getMockTrustScore(slug: string): TrustScoreBreakdown | null {
           findings: [
             "Backend unavailable — start the API at localhost:8000 for live security results",
           ],
+        },
+      },
+      {
+        id: "freshness",
+        label: "Repository freshness",
+        status: "pass",
+        detail: "Updated within maintenance window",
+      },
+      {
+        id: "domain_reputation",
+        label: "Domain reputation",
+        status: "unknown",
+        detail: "Safe Browsing / VirusTotal check not run yet",
+      },
+      {
+        id: "host",
+        label: "Hostname validation",
+        status: "unknown",
+        detail: "Connect to the Verita backend for live DNS verification",
+        evidence: {
+          method: "DNS hostname resolution",
+          target: api.baseUrl,
+          testedAt,
+          findings: ["Mock catalog data — live proof requires the security API"],
         },
       },
       {
