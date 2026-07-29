@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants/config";
@@ -35,6 +35,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#17171a",
+  colorScheme: "dark",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -43,7 +48,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} dark h-full antialiased`}
+      style={{ colorScheme: "dark" }}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <SiteShell>{children}</SiteShell>
