@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sparkles, ShieldCheck, FileCode, X, Construction } from "lucide-react";
+import { ShieldCheck, FileCode, X, Construction } from "lucide-react";
 import { Button } from "@/components/ui/shadcn/button";
 
 interface SuggestApiModalProps {
@@ -67,8 +67,7 @@ export function SuggestApiModal({ isOpen, onClose }: SuggestApiModalProps) {
 
             {/* Content */}
             <div className="mt-4">
-              <h3 className="flex items-center gap-2 font-display text-xl font-bold tracking-tight text-foreground">
-                <Sparkles className="size-5 text-primary" />
+              <h3 className="font-display text-xl font-bold tracking-tight text-foreground">
                 Suggest an API
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
