@@ -1,12 +1,18 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { ResponseViewer } from "@/components/tester/ResponseViewer";
-import { CodeSnippetPanel } from "@/components/tester/CodeSnippetPanel";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { API_BASE_URL } from "@/lib/constants/config";
+import {
+  buildDefaultQuery,
+  buildPathExample,
+} from "@/lib/utils/api-request-url";
 import type { ApiCatalogEntry } from "@/types/api";
 
 interface ApiTesterProps {
@@ -17,28 +23,6 @@ interface TestResponse {
   status: number;
   latencyMs: number;
   body: string;
-}
-
-function buildDefaultPath(api: ApiCatalogEntry): string {
-  return api.endpoints[0]?.path ?? "/";
-}
-
-function buildDefaultQuery(api: ApiCatalogEntry): string {
-  const endpoint = api.endpoints[0];
-  if (!endpoint?.parameters?.length) return "";
-
-  return endpoint.parameters
-    .filter((param) => param.in === "query" && param.example)
-    .map((param) => `${param.name}=${param.example}`)
-    .join("&");
-}
-
-function buildPathExample(api: ApiCatalogEntry): string {
-  const endpoint = api.endpoints[0];
-  const pathParam = endpoint?.parameters?.find((param) => param.in === "path");
-  if (!endpoint || !pathParam?.example) return buildDefaultPath(api);
-
-  return endpoint.path.replace(`{${pathParam.name}}`, pathParam.example);
 }
 
 function resolveRequestPath(api: ApiCatalogEntry, path: string): string {
@@ -100,6 +84,7 @@ async function sendProxyRequest(
 }
 
 export function ApiTester({ api }: ApiTesterProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [path, setPath] = useState(() => buildPathExample(api));
   const [query, setQuery] = useState(() => buildDefaultQuery(api));
   const [apiKey, setApiKey] = useState("");
@@ -149,67 +134,98 @@ export function ApiTester({ api }: ApiTesterProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-            Try it now
-          </h2>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            Sends a GET request directly when CORS allows it, otherwise routes
-            through the Verita backend proxy.
-          </p>
+    <Card className="min-w-0 overflow-hidden border-border bg-card">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-foreground">Try it now</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sends a GET request directly when CORS allows it, otherwise routes
+          through the Verita backend proxy.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="Endpoint path"
+          name="path"
+          value={path}
+          onChange={(event) => setPath(event.target.value)}
+        />
+        <Input
+          label="Query string"
+          name="query"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="key=value&key2=value2"
+        />
+        {api.authMethod === "api-key" ? (
+          <Input
+            label="API key"
+            name="apiKey"
+            type="password"
+            value={apiKey}
+            onChange={(event) => setApiKey(event.target.value)}
+          />
+        ) : null}
+
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Sending..." : "Send request"}
+        </Button>
+      </form>
+
+      <div className="mt-4 min-w-0 overflow-hidden rounded-lg border border-border">
+        <div className="border-b border-border bg-zinc-950/90 p-3">
+          <p className="text-xs font-medium text-zinc-400">Request</p>
+          <pre className="mt-1 max-h-28 min-w-0 overflow-auto whitespace-pre-wrap break-all font-mono text-xs leading-relaxed text-emerald-400">
+            GET {requestUrl}
+          </pre>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="Endpoint path"
-            name="path"
-            value={path}
-            onChange={(event) => setPath(event.target.value)}
-          />
-          <Input
-            label="Query string"
-            name="query"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="key=value&key2=value2"
-          />
-          {api.authMethod === "api-key" ? (
-            <Input
-              label="API key"
-              name="apiKey"
-              type="password"
-              value={apiKey}
-              onChange={(event) => setApiKey(event.target.value)}
-            />
+        <AnimatePresence mode="wait" initial={false}>
+          {response ? (
+            <motion.div
+              key={`${response.status}-${response.latencyMs}-${response.body.slice(0, 24)}`}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="min-w-0 bg-zinc-950/70 p-3"
+            >
+              <ResponseViewer response={response} embedded />
+            </motion.div>
           ) : null}
+        </AnimatePresence>
+      </div>
 
-          <div className="rounded-lg bg-zinc-950 px-4 py-3 font-mono text-sm text-emerald-300">
-            GET {requestUrl}
-          </div>
-
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Sending..." : "Send request"}
-          </Button>
-        </form>
-
+      <AnimatePresence initial={false}>
         {viaProxy ? (
-          <p className="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-200">
+          <motion.p
+            key="proxy-notice"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-200"
+          >
             Request routed through the Verita backend proxy (direct browser call
             was blocked by CORS).
-          </p>
+          </motion.p>
         ) : null}
+      </AnimatePresence>
 
+      <AnimatePresence initial={false}>
         {error ? (
-          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+          <motion.p
+            key={error}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
+          >
             {error}
-          </p>
+          </motion.p>
         ) : null}
-      </Card>
-
-      {response ? <ResponseViewer response={response} /> : null}
-      <CodeSnippetPanel url={requestUrl} />
-    </div>
+      </AnimatePresence>
+    </Card>
   );
 }

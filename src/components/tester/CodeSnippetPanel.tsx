@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import { Card } from "@/components/ui/Card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs";
 
 interface CodeSnippetPanelProps {
   url: string;
@@ -31,26 +33,33 @@ export function CodeSnippetPanel({ url }: CodeSnippetPanelProps) {
   const snippet = useMemo(() => buildSnippet(activeTab, url), [activeTab, url]);
 
   return (
-    <Card>
-      <div className="mb-4 flex flex-wrap gap-2">
+    <Card className="min-w-0 border-border bg-card">
+      <h2 className="text-lg font-semibold text-foreground">Code examples</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Copy a snippet for your preferred language or tool.
+      </p>
+
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as SnippetTab)}
+        className="mt-4"
+      >
+        <TabsList>
+          {SNIPPET_TABS.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
         {SNIPPET_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "bg-emerald-600 text-white"
-                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-            }`}
-          >
-            {tab.label}
-          </button>
+          <TabsContent key={tab.id} value={tab.id} className="mt-3">
+            <pre className="max-h-96 min-w-0 overflow-auto whitespace-pre-wrap break-all rounded-lg bg-zinc-950 p-4 font-mono text-sm leading-relaxed text-zinc-100">
+              {tab.id === activeTab ? snippet : buildSnippet(tab.id, url)}
+            </pre>
+          </TabsContent>
         ))}
-      </div>
-      <pre className="overflow-x-auto rounded-lg bg-zinc-950 p-4 text-sm text-zinc-100">
-        {snippet}
-      </pre>
+      </Tabs>
     </Card>
   );
 }

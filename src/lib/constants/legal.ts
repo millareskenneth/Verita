@@ -8,6 +8,10 @@ export const SUBMISSION_COMPLIANCE_NOTE =
   "We only index APIs with official documentation or repositories and permissive open-source licenses. Submissions must link to a public source we can verify.";
 
 export const FOOTER_LEGAL_LINKS = [
+  { href: "/methodology", label: "Trust score methodology" },
   { href: "/terms", label: "Terms of Service" },
   { href: "/privacy", label: "Privacy Policy" },
 ] as const;
+
+export const SUBMISSION_SECURITY_NOTE =
+  "Submitted APIs go through the same automated security checks before being listed.";

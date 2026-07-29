@@ -103,10 +103,7 @@ export default function PrivacyPage() {
       <LegalSection title="Related policies">
         <p>
           See also our{" "}
-          <Link
-            href="/terms"
-            className="font-medium text-emerald-700 hover:underline dark:text-emerald-400"
-          >
+          <Link href="/terms" className="font-medium text-primary hover:underline">
             Terms of Service
           </Link>{" "}
           for trust score disclaimers and data sourcing rules.

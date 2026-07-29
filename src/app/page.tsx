@@ -1,19 +1,24 @@
+import { CategoriesSection } from "@/components/landing/CategoriesSection";
+import { CtaSection } from "@/components/landing/CtaSection";
+import { FeaturedApisSection } from "@/components/landing/FeaturedApisSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
-import { FeaturedApisSection } from "@/components/landing/FeaturedApisSection";
-import { CategoriesSection } from "@/components/landing/CategoriesSection";
-import { CtaSection } from "@/components/landing/CtaSection";
+import { HeroFeaturesScrollTransition } from "@/components/motion/HeroFeaturesScrollTransition";
+import { LandingMotionShell } from "@/components/motion/LandingMotionShell";
 
 export default function HomePage() {
   return (
-    <>
-      <HeroSection />
-      <FeaturesSection />
+    <LandingMotionShell>
+      <HeroFeaturesScrollTransition
+        hero={<HeroSection />}
+        features={<FeaturesSection />}
+      />
+
       <HowItWorksSection />
       <FeaturedApisSection />
       <CategoriesSection />
       <CtaSection />
-    </>
+    </LandingMotionShell>
   );
 }

@@ -234,6 +234,8 @@ export function getMockTrustScore(slug: string): TrustScoreBreakdown | null {
   return {
     overall: api.trustScore,
     riskLevel: api.trustScore >= 85 ? "low" : api.trustScore >= 70 ? "medium" : "high",
+    trustLabel:
+      api.trustScore >= 85 ? "High" : api.trustScore >= 70 ? "Medium" : "Low",
     lastScannedAt: "2026-07-20T08:00:00.000Z",
     checks: [
       { id: "ssl", label: "SSL / HTTPS", status: "pass" },

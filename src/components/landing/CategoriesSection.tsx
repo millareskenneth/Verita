@@ -1,3 +1,5 @@
+"use client";
+
 import { landingShellClass } from "@/components/landing/landing-shell";
 import Link from "next/link";
 import {
@@ -10,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { HoverLift, Reveal, StaggerItem, StaggerReveal } from "@/components/motion/Reveal";
 import { API_CATEGORIES } from "@/lib/constants/categories";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +29,7 @@ export function CategoriesSection() {
   return (
     <section className="border-t border-border bg-muted/20">
       <div className={landingShellClass + " py-20"}>
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
             Browse
           </p>
@@ -36,43 +39,46 @@ export function CategoriesSection() {
           <p className="mt-4 text-muted-foreground">
             Jump into a category to find APIs for your next project.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerReveal className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {API_CATEGORIES.map((category) => {
             const Icon = CATEGORY_ICONS[category.slug] ?? Wrench;
 
             return (
-              <Link
-                key={category.slug}
-                href={`/categories/${category.slug}`}
-                className={cn(
-                  "group flex items-center gap-4 rounded-xl border border-border/60 bg-card p-5",
-                  "transition-all hover:border-primary/30 hover:shadow-md hover:shadow-primary/5",
-                )}
-              >
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Icon className="size-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold">{category.label}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    View {category.label.toLowerCase()} APIs
-                  </p>
-                </div>
-              </Link>
+              <StaggerItem key={category.slug}>
+                <HoverLift>
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    className={cn(
+                      "group flex items-center gap-4 rounded-xl border border-border/60 bg-card p-5",
+                      "transition-colors hover:border-primary/30 hover:shadow-md hover:shadow-primary/5",
+                    )}
+                  >
+                    <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <Icon className="size-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{category.label}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        View {category.label.toLowerCase()} APIs
+                      </p>
+                    </div>
+                  </Link>
+                </HoverLift>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerReveal>
 
-        <div className="mt-8 text-center">
+        <Reveal className="mt-8 text-center" delay={0.1}>
           <Link
             href="/apis"
             className="text-sm font-medium text-primary hover:underline"
           >
             Or browse the full catalog →
           </Link>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

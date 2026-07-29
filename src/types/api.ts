@@ -22,6 +22,11 @@ export type SortOption =
   | "last-updated"
   | "doc-completeness";
 
+export type CatalogReadinessStatus =
+  | "plug-and-play"
+  | "api-key-required"
+  | "docs-only";
+
 export interface ApiParameter {
   name: string;
   in: "query" | "header" | "path" | "body";
@@ -58,6 +63,7 @@ export interface ApiCatalogEntry {
   rateLimit?: string;
   requestExample?: string;
   responseExample?: string;
+  readinessStatus?: CatalogReadinessStatus;
 }
 
 export interface ApiSearchParams {

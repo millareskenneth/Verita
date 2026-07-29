@@ -1,45 +1,51 @@
-import { landingShellClass } from "@/components/landing/landing-shell";
 import Link from "next/link";
 
-import { Logo } from "@/components/brand/Logo";
-import { Separator } from "@/components/ui/shadcn/separator";
 import { APP_NAME } from "@/lib/constants/config";
-import { FOOTER_DISCLAIMER, FOOTER_LEGAL_LINKS } from "@/lib/constants/legal";
+import { FOOTER_LEGAL_LINKS } from "@/lib/constants/legal";
+import { cn } from "@/lib/utils";
+
+const footerLinkClass = cn(
+  "font-medium text-foreground underline-offset-4 transition-colors",
+  "hover:text-primary hover:underline",
+  "focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+);
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="mt-auto border-t border-border bg-muted/20">
-      <div className={`${landingShellClass} py-10`}>
-        <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-          <div className="max-w-md">
-            <Logo href={null} size="sm" />
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {FOOTER_DISCLAIMER}
-            </p>
-          </div>
-          <nav aria-label="Legal">
-            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-              {FOOTER_LEGAL_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="font-medium text-primary hover:underline"
+      <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs sm:text-sm">
+          <p className="text-muted-foreground">
+            © {year} {APP_NAME}. All rights reserved.
+          </p>
+
+          <span
+            aria-hidden
+            className="mx-2.5 text-muted-foreground/50 select-none sm:mx-3"
+          >
+            ·
+          </span>
+
+          <nav aria-label="Legal" className="flex flex-wrap items-center justify-center">
+            {FOOTER_LEGAL_LINKS.map((link, index) => (
+              <span key={link.href} className="flex items-center">
+                {index > 0 ? (
+                  <span
+                    aria-hidden
+                    className="mx-2.5 text-muted-foreground/50 select-none sm:mx-3"
                   >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    ·
+                  </span>
+                ) : null}
+                <Link href={link.href} className={footerLinkClass}>
+                  {link.label}
+                </Link>
+              </span>
+            ))}
           </nav>
         </div>
-
-        <Separator className="my-8" />
-
-        <p className="text-sm text-muted-foreground">
-          © {year} {APP_NAME}. All rights reserved.
-        </p>
       </div>
     </footer>
   );

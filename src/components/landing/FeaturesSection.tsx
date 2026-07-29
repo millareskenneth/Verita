@@ -5,7 +5,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { landingShellClass } from "@/components/landing/landing-shell";
 import {
   Card,
   CardContent,
@@ -13,6 +12,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/shadcn/card";
+import { landingShellClass } from "@/components/landing/landing-shell";
+import {
+  HoverLift,
+  StaggerItem,
+  StaggerReveal,
+} from "@/components/motion/Reveal";
 
 const FEATURES = [
   {
@@ -43,7 +48,7 @@ const FEATURES = [
 
 export function FeaturesSection() {
   return (
-    <section className={landingShellClass + " py-20"}>
+    <section className={landingShellClass + " pb-20 pt-4"}>
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
           Why Verita
@@ -57,26 +62,27 @@ export function FeaturesSection() {
         </p>
       </div>
 
-      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <StaggerReveal className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {FEATURES.map((feature) => (
-          <Card
-            key={feature.title}
-            className="border-border/60 bg-card/50 py-0 shadow-none transition-colors hover:border-primary/30 hover:bg-card"
-          >
-            <CardHeader className="px-5 pt-5">
-              <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <feature.icon className="size-5" />
-              </div>
-              <CardTitle className="text-base">{feature.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="px-5 pb-5">
-              <CardDescription className="text-sm leading-relaxed">
-                {feature.description}
-              </CardDescription>
-            </CardContent>
-          </Card>
+          <StaggerItem key={feature.title}>
+            <HoverLift>
+              <Card className="h-full border-border/60 bg-card/50 py-0 shadow-none transition-colors hover:border-primary/30 hover:bg-card">
+                <CardHeader className="px-5 pt-5">
+                  <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <feature.icon className="size-5" />
+                  </div>
+                  <CardTitle className="text-base">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  <CardDescription className="text-sm leading-relaxed">
+                    {feature.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </HoverLift>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerReveal>
     </section>
   );
 }

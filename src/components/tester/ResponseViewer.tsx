@@ -1,39 +1,65 @@
-import { Card } from "@/components/ui/Card";
-
 interface ResponseViewerProps {
   response: {
     status: number;
     latencyMs: number;
     body: string;
   };
+  embedded?: boolean;
 }
 
-export function ResponseViewer({ response }: ResponseViewerProps) {
-  let formattedBody = response.body;
-
+function formatResponseBody(body: string): string {
   try {
-    formattedBody = JSON.stringify(JSON.parse(response.body), null, 2);
+    return JSON.stringify(JSON.parse(body), null, 2);
   } catch {
-    // Keep raw body when response is not JSON.
+    return body;
   }
+}
 
-  return (
-    <Card>
-      <div className="mb-4 flex flex-wrap items-center gap-4 text-sm">
-        <span className="font-medium text-zinc-700 dark:text-zinc-300">
+export function ResponseViewer({ response, embedded = false }: ResponseViewerProps) {
+  const formattedBody = formatResponseBody(response.body);
+
+  const content = (
+    <div className="min-w-0">
+      <p
+        className={
+          embedded
+            ? "text-xs font-medium text-zinc-400"
+            : "text-xs font-medium text-muted-foreground"
+        }
+      >
+        Response
+      </p>
+      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+        <span className={embedded ? "text-zinc-400" : "text-muted-foreground"}>
           Status:{" "}
-          <span className="text-zinc-950 dark:text-zinc-50">{response.status}</span>
+          <span className={embedded ? "font-medium text-zinc-100" : "font-medium text-foreground"}>
+            {response.status}
+          </span>
         </span>
-        <span className="font-medium text-zinc-700 dark:text-zinc-300">
+        <span className={embedded ? "text-zinc-400" : "text-muted-foreground"}>
           Latency:{" "}
-          <span className="text-zinc-950 dark:text-zinc-50">
+          <span className={embedded ? "font-medium text-zinc-100" : "font-medium text-foreground"}>
             {response.latencyMs} ms
           </span>
         </span>
       </div>
-      <pre className="max-h-96 overflow-auto rounded-lg bg-zinc-950 p-4 text-sm text-zinc-100">
+      <pre
+        className={`mt-2 max-h-72 min-w-0 overflow-auto whitespace-pre-wrap break-words rounded-md p-3 font-mono text-xs leading-relaxed text-zinc-100 ${
+          embedded ? "bg-zinc-950" : "bg-zinc-950"
+        }`}
+      >
         {formattedBody}
       </pre>
-    </Card>
+    </div>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      {content}
+    </div>
   );
 }
