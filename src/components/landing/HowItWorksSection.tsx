@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { landingShellClass } from "@/components/landing/landing-shell";
 import { Reveal, StaggerItem, StaggerReveal } from "@/components/motion/Reveal";
+import { useAutoScrollCarousel } from "@/hooks/useAutoScrollCarousel";
 
 const STEPS = [
   {
@@ -29,34 +29,10 @@ const STEPS = [
 ] as const;
 
 export function HowItWorksSection() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.scrollWidth / STEPS.length;
-    const index = Math.round(el.scrollLeft / cardWidth);
-    setActiveIndex(Math.min(Math.max(0, index), STEPS.length - 1));
-  }, []);
-
-  const scrollToIndex = (index: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.scrollWidth / STEPS.length;
-    el.scrollTo({
-      left: index * cardWidth,
-      behavior: "smooth",
-    });
-    setActiveIndex(index);
-  };
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+  const { scrollRef, activeIndex, scrollToIndex } = useAutoScrollCarousel({
+    itemCount: STEPS.length,
+    intervalMs: 4500,
+  });
 
   return (
     <section className="border-y border-border bg-muted/30">
