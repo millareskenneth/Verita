@@ -72,31 +72,29 @@ export function FeaturesSection() {
 
       <div className="relative mt-14">
         {/* Mobile horizontal scroll-snap carousel / Desktop 3-column grid */}
-        <div
+        <StaggerReveal
           ref={scrollRef}
           className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0"
         >
-          <StaggerReveal className="contents">
-            {WHY_VERITA_ITEMS.map((item) => (
-              <StaggerItem
-                key={item.number}
-                className="w-[78%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
-              >
-                <div className="group relative flex h-full flex-col rounded-2xl border border-border/60 bg-card/40 p-6 shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card hover:shadow-md dark:bg-card/30">
-                  <span className="font-display text-4xl font-bold tracking-tight text-primary sm:text-5xl">
-                    {item.number}
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-pretty">
-                    {item.description}
-                  </p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerReveal>
-        </div>
+          {WHY_VERITA_ITEMS.map((item) => (
+            <StaggerItem
+              key={item.number}
+              className="w-[78%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+            >
+              <div className="group relative flex h-full flex-col rounded-2xl border border-border/60 bg-card/40 p-6 shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card hover:shadow-md dark:bg-card/30">
+                <span className="font-display text-4xl font-bold tracking-tight text-primary sm:text-5xl">
+                  {item.number}
+                </span>
+                <h3 className="mt-4 text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-pretty">
+                  {item.description}
+                </p>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerReveal>
 
         {/* Pagination dots for Mobile carousel */}
         <div className="mt-4 flex justify-center items-center gap-2 md:hidden">

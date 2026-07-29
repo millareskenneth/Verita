@@ -1,7 +1,5 @@
-"use client";
-
+import { forwardRef, type ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
-import type { ReactNode } from "react";
 
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
@@ -70,34 +68,37 @@ interface StaggerRevealProps {
   stagger?: number;
 }
 
-export function StaggerReveal({
-  children,
-  className,
-  stagger = 0.08,
-}: StaggerRevealProps) {
-  const prefersReducedMotion = usePrefersReducedMotion();
+export const StaggerReveal = forwardRef<HTMLDivElement, StaggerRevealProps>(
+  function StaggerReveal({ children, className, stagger = 0.08 }, ref) {
+    const prefersReducedMotion = usePrefersReducedMotion();
 
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
+    if (prefersReducedMotion) {
+      return (
+        <div ref={ref} className={className}>
+          {children}
+        </div>
+      );
+    }
+
+    return (
+      <motion.div
+        ref={ref}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-5% 0px -5% 0px" }}
+        variants={{
+          hidden: {},
+          visible: {
+            transition: { staggerChildren: stagger },
+          },
+        }}
+        className={className}
+      >
+        {children}
+      </motion.div>
+    );
   }
-
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
-      variants={{
-        hidden: {},
-        visible: {
-          transition: { staggerChildren: stagger },
-        },
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
+);
 
 export function StaggerEnter({
   children,
