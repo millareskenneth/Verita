@@ -6,19 +6,19 @@ import { useAutoScrollCarousel } from "@/hooks/useAutoScrollCarousel";
 
 const WHY_VERITA_ITEMS = [
   {
-    number: "01",
+    id: "curated-discovery",
     title: "Curated discovery",
     description:
       "Every API is vetted for free-tier availability, open licensing, and real documentation — not scraped junk.",
   },
   {
-    number: "02",
+    id: "test-before-integrate",
     title: "Test before you integrate",
     description:
       "Send live requests right in the browser with our built-in tester and safe proxy.",
   },
   {
-    number: "03",
+    id: "trust-before-ship",
     title: "Trust before you ship",
     description:
       "Security scans, dependency checks, and doc completeness roll up into an advisory trust score on every API page.",
@@ -54,17 +54,16 @@ export function FeaturesSection() {
         >
           {WHY_VERITA_ITEMS.map((item) => (
             <StaggerItem
-              key={item.number}
+              key={item.id}
               className="w-[78%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
             >
               <div className="group relative flex h-full flex-col rounded-2xl border border-border/60 bg-card/40 p-6 shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card hover:shadow-md dark:bg-card/30">
-                <span className="font-display text-4xl font-bold tracking-tight text-primary sm:text-5xl">
-                  {item.number}
-                </span>
-                <h3 className="mt-4 text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
+                {/* Thin horizontal accent line: 28px x 3px, rounded 2px, 16px bottom margin */}
+                <div className="mb-4 h-[3px] w-[28px] rounded-[2px] bg-primary" />
+                <h3 className="text-base font-medium tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-lg">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-pretty">
+                <p className="mt-2 text-[13px] leading-[1.6] text-muted-foreground text-pretty">
                   {item.description}
                 </p>
               </div>
@@ -76,7 +75,7 @@ export function FeaturesSection() {
         <div className="mt-4 flex justify-center items-center gap-2 md:hidden">
           {WHY_VERITA_ITEMS.map((item, idx) => (
             <button
-              key={item.number}
+              key={item.id}
               onClick={() => scrollToIndex(idx)}
               aria-label={`Go to slide ${idx + 1}`}
               className={`h-2 rounded-full transition-all duration-300 ${
