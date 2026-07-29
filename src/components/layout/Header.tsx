@@ -1,31 +1,47 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { LayoutGrid, Plus } from "lucide-react";
 
 import { Logo } from "@/components/brand/Logo";
+import { SuggestApiModal } from "@/components/modals/SuggestApiModal";
 import { Button } from "@/components/ui/shadcn/button";
 
-const NAV_LINKS = [
-  { href: "/apis", label: "Browse APIs", icon: LayoutGrid },
-  { href: "/submit", label: "Suggest API", icon: Plus },
-] as const;
-
 export function Header() {
-  return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-background/80 backdrop-blur-lg">
-      <div className="flex w-full items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Logo />
+  const [isSuggestModalOpen, setIsSuggestModalOpen] = useState(false);
 
-        <nav className="flex items-center gap-1">
-          {NAV_LINKS.map((link) => (
-            <Button key={link.href} asChild variant="ghost" size="sm">
-              <Link href={link.href} className="gap-2">
-                <link.icon className="size-4" />
-                <span className="hidden sm:inline">{link.label}</span>
+  return (
+    <>
+      <header className="sticky top-0 z-50 border-b border-border/80 bg-background/80 backdrop-blur-lg">
+        <div className="flex w-full items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+          <Logo />
+
+          <nav className="flex items-center gap-1">
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/apis" className="gap-2">
+                <LayoutGrid className="size-4" />
+                <span className="hidden sm:inline">Browse APIs</span>
               </Link>
             </Button>
-          ))}
-        </nav>
-      </div>
-    </header>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsSuggestModalOpen(true)}
+              className="gap-2"
+            >
+              <Plus className="size-4" />
+              <span className="hidden sm:inline">Suggest API</span>
+            </Button>
+          </nav>
+        </div>
+      </header>
+
+      <SuggestApiModal
+        isOpen={isSuggestModalOpen}
+        onClose={() => setIsSuggestModalOpen(false)}
+      />
+    </>
   );
 }
