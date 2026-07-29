@@ -70,6 +70,7 @@ export interface ApiSearchParams {
   query?: string;
   category?: string;
   sort?: SortOption;
+  readiness?: CatalogReadinessStatus;
   page?: number;
   limit?: number;
 }

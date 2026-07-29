@@ -1,3 +1,7 @@
+"use client";
+
+import { CodeBlock } from "@/components/ui/CodeBlock";
+
 interface ResponseViewerProps {
   response: {
     status: number;
@@ -15,8 +19,18 @@ function formatResponseBody(body: string): string {
   }
 }
 
+function isJsonBody(body: string): boolean {
+  try {
+    JSON.parse(body);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function ResponseViewer({ response, embedded = false }: ResponseViewerProps) {
   const formattedBody = formatResponseBody(response.body);
+  const jsonBody = isJsonBody(response.body);
 
   const content = (
     <div className="min-w-0">
@@ -43,13 +57,13 @@ export function ResponseViewer({ response, embedded = false }: ResponseViewerPro
           </span>
         </span>
       </div>
-      <pre
-        className={`mt-2 max-h-72 min-w-0 overflow-auto whitespace-pre-wrap break-words rounded-md p-3 font-mono text-xs leading-relaxed text-zinc-100 ${
-          embedded ? "bg-zinc-950" : "bg-zinc-950"
-        }`}
-      >
-        {formattedBody}
-      </pre>
+      <div className="mt-2">
+        <CodeBlock
+          code={formattedBody}
+          language={jsonBody ? "json" : "text"}
+          minHeight="10rem"
+        />
+      </div>
     </div>
   );
 

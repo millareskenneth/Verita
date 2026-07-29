@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { ApiOverview } from "@/components/api-detail/ApiOverview";
 import { EndpointList } from "@/components/api-detail/EndpointList";
@@ -9,12 +9,11 @@ import { SecuritySummary } from "@/components/api-detail/SecuritySummary";
 import { TrustScoreBreakdownPanel } from "@/components/api-detail/TrustScoreBreakdown";
 import { TrustScoreDisclaimer } from "@/components/api-detail/TrustScoreDisclaimer";
 import { ApiTester } from "@/components/tester/ApiTester";
-import { CodeSnippetPanel } from "@/components/tester/CodeSnippetPanel";
+import { ApiIntegrationGuide } from "@/components/api-detail/ApiIntegrationGuide";
 import { ReadinessBadge } from "@/components/catalog/ReadinessBadge";
 import { FadeIn } from "@/components/motion/Reveal";
 import { AnimatedTabTrigger, TabPanelMotion } from "@/components/motion/TabMotion";
 import { Tabs, TabsList } from "@/components/ui/shadcn/tabs";
-import { buildDefaultRequestUrl } from "@/lib/utils/api-request-url";
 import type { ApiCatalogEntry } from "@/types/api";
 import type { TrustScoreBreakdown } from "@/types/security";
 
@@ -25,7 +24,6 @@ interface ApiDetailContentProps {
 
 export function ApiDetailContent({ api, trustScore }: ApiDetailContentProps) {
   const [activeTab, setActiveTab] = useState("overview");
-  const defaultRequestUrl = useMemo(() => buildDefaultRequestUrl(api), [api]);
 
   return (
     <div>
@@ -79,8 +77,8 @@ export function ApiDetailContent({ api, trustScore }: ApiDetailContentProps) {
               <AnimatedTabTrigger value="security" activeTab={activeTab} className="rounded-md">
                 Security
               </AnimatedTabTrigger>
-              <AnimatedTabTrigger value="code" activeTab={activeTab} className="rounded-md">
-                Code examples
+              <AnimatedTabTrigger value="integration" activeTab={activeTab} className="rounded-md">
+                Integration
               </AnimatedTabTrigger>
             </TabsList>
           </div>
@@ -102,8 +100,8 @@ export function ApiDetailContent({ api, trustScore }: ApiDetailContentProps) {
                   </p>
                 )
               ) : null}
-              {activeTab === "code" ? (
-                <CodeSnippetPanel url={defaultRequestUrl} />
+              {activeTab === "integration" ? (
+                <ApiIntegrationGuide api={api} />
               ) : null}
             </TabPanelMotion>
           </div>

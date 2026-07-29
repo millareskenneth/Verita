@@ -1,16 +1,18 @@
 import { Suspense } from "react";
+import Link from "next/link";
 
 import { ApiGrid } from "@/components/catalog/ApiGrid";
 import { CatalogPagination } from "@/components/catalog/CatalogPagination";
 import { CategoryFilter } from "@/components/catalog/CategoryFilter";
 import { SortSelect } from "@/components/catalog/SortSelect";
 import { searchApis } from "@/lib/api/client";
-import type { SortOption } from "@/types/api";
+import type { SortOption, CatalogReadinessStatus } from "@/types/api";
 
 interface ApisPageProps {
   searchParams: Promise<{
     sort?: SortOption;
     page?: string;
+    readiness?: CatalogReadinessStatus;
   }>;
 }
 
@@ -20,9 +22,11 @@ export default async function ApisPage({ searchParams }: ApisPageProps) {
   const params = await searchParams;
   const page = Math.max(1, Number(params.page ?? "1") || 1);
   const sort = params.sort ?? "popularity";
+  const readiness = params.readiness;
 
   const result = await searchApis({
     sort,
+    readiness,
     page,
     limit: PAGE_SIZE,
   });
@@ -46,8 +50,29 @@ export default async function ApisPage({ searchParams }: ApisPageProps) {
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-8 flex flex-wrap items-center gap-2">
         <CategoryFilter />
+        <span className="mx-1 hidden h-4 w-px bg-border sm:inline-block" aria-hidden />
+        <Link
+          href="/apis?readiness=plug-and-play"
+          className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+            readiness === "plug-and-play"
+              ? "bg-emerald-600 text-white"
+              : "border border-border bg-card text-foreground hover:border-border-accent"
+          }`}
+        >
+          Ready to use
+        </Link>
+        <Link
+          href="/apis"
+          className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+            !readiness
+              ? "border border-border bg-muted/40 text-muted-foreground"
+              : "border border-border bg-card text-foreground hover:border-border-accent"
+          }`}
+        >
+          All APIs
+        </Link>
       </div>
 
       <p className="mb-6 text-sm text-muted-foreground">
@@ -62,7 +87,10 @@ export default async function ApisPage({ searchParams }: ApisPageProps) {
         page={page}
         limit={PAGE_SIZE}
         total={result.total}
-        searchParams={{ sort: sort === "popularity" ? undefined : sort }}
+        searchParams={{
+          sort: sort === "popularity" ? undefined : sort,
+          readiness,
+        }}
       />
     </div>
   );

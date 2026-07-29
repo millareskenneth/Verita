@@ -37,6 +37,7 @@ export async function searchApis(
     if (params.query) query.set("q", params.query);
     if (params.category) query.set("category", params.category);
     if (params.sort) query.set("sort", params.sort);
+    if (params.readiness) query.set("readiness", params.readiness);
     if (params.page) query.set("page", String(params.page));
     if (params.limit) query.set("limit", String(params.limit));
 

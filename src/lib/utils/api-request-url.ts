@@ -30,4 +30,18 @@ export function buildDefaultRequestUrl(api: ApiCatalogEntry): string {
   return query.trim() ? `${base}?${query.trim()}` : base;
 }
 
+/** Best URL to open when clicking Base URL — prefers a live endpoint over a bare API root. */
+export function getBaseUrlHref(api: ApiCatalogEntry): string {
+  if (api.endpoints.length > 0) {
+    return buildDefaultRequestUrl(api);
+  }
+
+  const source = api.sourceUrl?.trim();
+  if (source?.startsWith("http://") || source?.startsWith("https://")) {
+    return source;
+  }
+
+  return api.baseUrl;
+}
+
 export { buildDefaultQuery, buildPathExample };
