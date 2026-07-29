@@ -14,6 +14,8 @@ interface AnimatedTabTriggerProps {
   activeTab: string;
   children: ReactNode;
   className?: string;
+  /** Highlights actionable tabs (e.g. Try it now) with accent borders. */
+  accent?: boolean;
 }
 
 export function AnimatedTabTrigger({
@@ -21,6 +23,7 @@ export function AnimatedTabTrigger({
   activeTab,
   children,
   className,
+  accent = false,
 }: AnimatedTabTriggerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const isActive = activeTab === value;
@@ -29,20 +32,32 @@ export function AnimatedTabTrigger({
     <TabsTrigger
       value={value}
       className={cn(
-        "relative z-0 bg-transparent shadow-none data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none",
+        "relative z-0 h-auto min-h-10 shrink-0 px-4 py-2.5 text-sm font-semibold shadow-none transition-colors",
+        "rounded-none bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none",
+        accent
+          ? cn(
+              "mb-0 rounded-lg border-2 border-emerald-500/35 text-emerald-700 hover:border-emerald-500/55 dark:text-emerald-400",
+              isActive &&
+                "border-emerald-500 bg-emerald-500/10 text-emerald-800 data-[state=active]:text-emerald-800 dark:text-emerald-300 dark:data-[state=active]:text-emerald-300",
+            )
+          : cn(
+              "border-b-2 border-transparent text-muted-foreground hover:text-foreground",
+              isActive &&
+                "text-foreground data-[state=active]:text-foreground",
+            ),
         className,
       )}
     >
-      {isActive && !prefersReducedMotion ? (
+      {isActive && !prefersReducedMotion && !accent ? (
         <motion.span
-          layoutId="api-detail-tab-indicator"
-          className="absolute inset-0 rounded-md bg-background shadow-sm"
+          layoutId="api-detail-tab-underline"
+          className="absolute inset-x-0 -bottom-px h-0.5 bg-primary"
           transition={{ type: "spring", stiffness: 420, damping: 32 }}
           aria-hidden
         />
-      ) : isActive ? (
+      ) : isActive && !accent ? (
         <span
-          className="absolute inset-0 rounded-md bg-background shadow-sm"
+          className="absolute inset-x-0 -bottom-px h-0.5 bg-primary"
           aria-hidden
         />
       ) : null}

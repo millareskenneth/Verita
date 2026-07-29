@@ -42,6 +42,8 @@ export interface ApiEndpoint {
   parameters?: ApiParameter[];
 }
 
+import type { TrustLabel } from "@/types/security";
+
 export interface ApiCatalogEntry {
   id: string;
   slug: string;
@@ -55,6 +57,7 @@ export interface ApiCatalogEntry {
   sourceUrl: string;
   freeStatus: FreeStatus;
   trustScore: number;
+  trustLabel?: TrustLabel;
   recommendationWarning?: string;
   documentationCompleteness: number;
   popularity: number;

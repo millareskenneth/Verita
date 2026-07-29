@@ -1,6 +1,10 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import {
+  buildCatalogHref,
+  buildPageItems,
+} from "@/lib/utils/catalog-url";
 
 interface CatalogPaginationProps {
   page: number;
@@ -8,29 +12,6 @@ interface CatalogPaginationProps {
   total: number;
   basePath?: string;
   searchParams?: Record<string, string | undefined>;
-}
-
-function buildHref(
-  page: number,
-  basePath: string,
-  searchParams?: Record<string, string | undefined>,
-) {
-  const params = new URLSearchParams();
-
-  if (searchParams) {
-    for (const [key, value] of Object.entries(searchParams)) {
-      if (value && key !== "page") {
-        params.set(key, value);
-      }
-    }
-  }
-
-  if (page > 1) {
-    params.set("page", String(page));
-  }
-
-  const query = params.toString();
-  return query ? `${basePath}?${query}` : basePath;
 }
 
 export function CatalogPagination({
@@ -47,6 +28,7 @@ export function CatalogPagination({
 
   const prevPage = Math.max(1, page - 1);
   const nextPage = Math.min(totalPages, page + 1);
+  const pageItems = buildPageItems(page, totalPages);
 
   return (
     <nav
@@ -57,32 +39,89 @@ export function CatalogPagination({
         Page {page} of {totalPages} · {total} APIs total
       </p>
 
-      <div className="flex items-center gap-2">
-        <Link
-          href={buildHref(prevPage, basePath, searchParams)}
-          aria-disabled={page <= 1}
-          className={cn(
-            "rounded-lg border border-border px-3 py-2 text-sm font-medium transition-colors",
-            page <= 1
-              ? "pointer-events-none opacity-40"
-              : "hover:border-border-accent hover:bg-muted/40",
-          )}
+      <div className="flex flex-wrap items-center justify-center gap-1">
+        <PaginationLink
+          href={buildCatalogHref(basePath, prevPage, searchParams)}
+          disabled={page <= 1}
+          label="Previous page"
         >
           Previous
-        </Link>
-        <Link
-          href={buildHref(nextPage, basePath, searchParams)}
-          aria-disabled={page >= totalPages}
-          className={cn(
-            "rounded-lg border border-border px-3 py-2 text-sm font-medium transition-colors",
-            page >= totalPages
-              ? "pointer-events-none opacity-40"
-              : "hover:border-border-accent hover:bg-muted/40",
+        </PaginationLink>
+
+        <ol className="flex items-center gap-1">
+          {pageItems.map((item, index) =>
+            item === "ellipsis" ? (
+              <li
+                key={`ellipsis-${index}`}
+                className="px-2 text-sm text-muted-foreground"
+                aria-hidden
+              >
+                …
+              </li>
+            ) : (
+              <li key={item}>
+                <PaginationLink
+                  href={buildCatalogHref(basePath, item, searchParams)}
+                  active={item === page}
+                  label={`Page ${item}`}
+                >
+                  {item}
+                </PaginationLink>
+              </li>
+            ),
           )}
+        </ol>
+
+        <PaginationLink
+          href={buildCatalogHref(basePath, nextPage, searchParams)}
+          disabled={page >= totalPages}
+          label="Next page"
         >
           Next
-        </Link>
+        </PaginationLink>
       </div>
     </nav>
+  );
+}
+
+function PaginationLink({
+  href,
+  children,
+  disabled = false,
+  active = false,
+  label,
+}: {
+  href: string;
+  children: React.ReactNode;
+  disabled?: boolean;
+  active?: boolean;
+  label: string;
+}) {
+  if (disabled) {
+    return (
+      <span
+        aria-disabled="true"
+        aria-label={label}
+        className="rounded-lg border border-border px-3 py-2 text-sm font-medium opacity-40"
+      >
+        {children}
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+        active
+          ? "border-primary bg-primary text-primary-foreground"
+          : "border-border hover:border-border-accent hover:bg-muted/40",
+      )}
+    >
+      {children}
+    </Link>
   );
 }

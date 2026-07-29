@@ -2,13 +2,32 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/shadcn/button";
-import { Input } from "@/components/ui/shadcn/input";
 
 interface HeroSearchFormProps {
   placeholder?: string;
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0 text-muted-foreground"
+      aria-hidden
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+  );
 }
 
 export function HeroSearchForm({
@@ -28,17 +47,18 @@ export function HeroSearchForm({
       onSubmit={handleSubmit}
       className="mx-auto flex w-full max-w-xl flex-col gap-3 sm:flex-row"
     >
-      <div className="relative min-w-0 flex-1">
-        <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
+      <label className="flex min-w-0 flex-1 items-center gap-2.5 rounded-md border border-input bg-background px-3 shadow-sm transition-[color,box-shadow] has-focus-visible:border-ring has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50">
+        <SearchIcon />
+        <input
+          type="search"
           name="q"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={placeholder}
-          className="h-12 bg-background/80 pl-10 text-base shadow-sm backdrop-blur-sm"
           aria-label="Search free APIs"
+          className="h-12 min-w-0 flex-1 border-0 bg-transparent p-0 text-base text-foreground outline-none placeholder:text-muted-foreground"
         />
-      </div>
+      </label>
       <Button type="submit" size="lg" className="h-12 shrink-0 px-6">
         Search
       </Button>

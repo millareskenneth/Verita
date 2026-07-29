@@ -31,14 +31,40 @@ export const TRUST_SCORE_BANDS = [
 export function getTrustLabel(score: number): {
   label: (typeof TRUST_SCORE_LABELS)[keyof typeof TRUST_SCORE_LABELS];
   variant: "success" | "warning" | "danger";
+  trustLabel: "High" | "Medium" | "Low";
 } {
-  if (score >= 85) {
-    return { label: TRUST_SCORE_LABELS.high, variant: "success" };
+  if (score >= 84) {
+    return { label: TRUST_SCORE_LABELS.high, variant: "success", trustLabel: "High" };
   }
-  if (score >= 70) {
-    return { label: TRUST_SCORE_LABELS.medium, variant: "warning" };
+  if (score >= 60) {
+    return { label: TRUST_SCORE_LABELS.medium, variant: "warning", trustLabel: "Medium" };
   }
-  return { label: TRUST_SCORE_LABELS.low, variant: "danger" };
+  return { label: TRUST_SCORE_LABELS.low, variant: "danger", trustLabel: "Low" };
+}
+
+/** Prefer API-provided trustLabel (from security checks) over numeric score bands. */
+export function getDisplayTrust(api: {
+  trustScore: number;
+  trustLabel?: "High" | "Medium" | "Low";
+}): {
+  label: (typeof TRUST_SCORE_LABELS)[keyof typeof TRUST_SCORE_LABELS];
+  variant: "success" | "warning" | "danger";
+} {
+  if (api.trustLabel) {
+    const variant =
+      api.trustLabel === "High"
+        ? "success"
+        : api.trustLabel === "Medium"
+          ? "warning"
+          : "danger";
+    return {
+      label: TRUST_SCORE_LABELS[api.trustLabel.toLowerCase() as keyof typeof TRUST_SCORE_LABELS],
+      variant,
+    };
+  }
+
+  const derived = getTrustLabel(api.trustScore);
+  return { label: derived.label, variant: derived.variant };
 }
 
 export const TRUST_VARIANT_STYLES = {

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { CodeBlock, type CodeBlockLanguage } from "@/components/ui/CodeBlock";
 import { Card } from "@/components/ui/Card";
+import { CopyButton } from "@/components/ui/CopyButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/shadcn/tabs";
 import { buildIntegrationGuide } from "@/lib/integration/build-integration-guide";
 import { buildSnippet } from "@/lib/integration/build-code-snippets";
@@ -82,6 +83,7 @@ function EndpointSnippets({
             code={snippets[tab.id === "curl" ? "curl" : tab.id]}
             language={tab.language as CodeBlockLanguage}
             minHeight={tab.id === "curl" ? "7rem" : "9rem"}
+            copyable
           />
         </TabsContent>
       ))}
@@ -196,9 +198,12 @@ export function ApiIntegrationGuide({ api }: ApiIntegrationGuideProps) {
               Verita does not have structured endpoints for this API yet. Use
               the provider&apos;s documentation to find paths and parameters.
             </p>
-            <p className="mt-2 break-all font-mono text-sm text-foreground">
-              {api.baseUrl}
-            </p>
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <p className="min-w-0 flex-1 break-all rounded-lg border border-border bg-muted/30 p-3 font-mono text-sm text-foreground">
+                {api.baseUrl}
+              </p>
+              <CopyButton text={api.baseUrl} label="Copy URL" copiedLabel="Copied" />
+            </div>
             <div className="mt-4">
               <EndpointSnippets snippets={fallbackSnippets} />
             </div>

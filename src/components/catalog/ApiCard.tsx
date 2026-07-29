@@ -7,7 +7,7 @@ import {
   READINESS_LABELS,
 } from "@/lib/constants/catalog-readiness";
 import { formatRelativeDate } from "@/lib/utils/format";
-import { getTrustLabel, TRUST_VARIANT_STYLES } from "@/lib/constants/trust-score";
+import { getDisplayTrust, TRUST_VARIANT_STYLES } from "@/lib/constants/trust-score";
 import { cn } from "@/lib/utils";
 import type { ApiCatalogEntry, AuthMethod } from "@/types/api";
 
@@ -32,7 +32,7 @@ function TagPill({ children }: { children: React.ReactNode }) {
 
 export function ApiCard({ api }: ApiCardProps) {
   const isFlagged = api.freeStatus === "quarantined" || api.freeStatus === "delisted";
-  const trust = getTrustLabel(api.trustScore);
+  const trust = getDisplayTrust(api);
   const trustStyles = TRUST_VARIANT_STYLES[trust.variant];
   const endpointCount = api.endpoints.length;
   const readiness = getReadinessStatus(api);

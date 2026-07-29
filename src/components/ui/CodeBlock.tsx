@@ -9,6 +9,8 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import CodeMirror from "@uiw/react-codemirror";
 import { useMemo } from "react";
 
+import { CopyButton } from "@/components/ui/CopyButton";
+
 export type CodeBlockLanguage = "javascript" | "python" | "shell" | "json" | "text";
 
 interface CodeBlockProps {
@@ -16,6 +18,7 @@ interface CodeBlockProps {
   language?: CodeBlockLanguage;
   className?: string;
   minHeight?: string;
+  copyable?: boolean;
 }
 
 function languageExtension(language: CodeBlockLanguage) {
@@ -38,6 +41,7 @@ export function CodeBlock({
   language = "text",
   className,
   minHeight = "8rem",
+  copyable = false,
 }: CodeBlockProps) {
   const extensions = useMemo(() => [languageExtension(language)], [language]);
 
@@ -45,6 +49,16 @@ export function CodeBlock({
     <div
       className={`min-w-0 overflow-hidden rounded-lg border border-border bg-[#282c34] ${className ?? ""}`}
     >
+      {copyable ? (
+        <div className="flex items-center justify-end border-b border-white/10 bg-[#21252b] px-2 py-1.5">
+          <CopyButton
+            text={code}
+            label="Copy code"
+            copiedLabel="Copied"
+            className="border-white/10 bg-[#282c34] text-zinc-200 hover:bg-[#323842]"
+          />
+        </div>
+      ) : null}
       <CodeMirror
         value={code}
         extensions={extensions}

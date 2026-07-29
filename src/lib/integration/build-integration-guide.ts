@@ -181,7 +181,7 @@ function buildPrerequisites(
   steps.push({
     title: "HTTP client",
     detail:
-      "Use cURL, fetch, requests, or any HTTP library. The Try it now panel on this page can validate the first request.",
+      "Use cURL, fetch, requests, or any HTTP library. The Try it now tab on this page can validate the first request.",
   });
 
   return steps;
@@ -273,7 +273,7 @@ function buildErrorHandling(api: ApiCatalogEntry): IntegrationStep[] {
     {
       title: "CORS in the browser",
       detail:
-        "Some APIs block browser-origin requests. Call from your backend server, or use the Verita Try it now panel which falls back to a server-side proxy when CORS blocks direct calls.",
+        "Some APIs block browser-origin requests. Call from your backend server, or use the Try it now tab, which falls back to a server-side proxy when CORS blocks direct calls.",
     },
   ];
 }

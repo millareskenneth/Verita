@@ -17,7 +17,7 @@ export function SecuritySummary({ breakdown, onViewBreakdown }: SecuritySummaryP
   const total = breakdown.checks.length;
 
   const className =
-    "rounded-lg border border-border bg-card px-3 py-2 text-left transition-colors hover:border-primary/40 hover:bg-muted/30";
+    "h-full rounded-lg border border-border bg-card px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-muted/30";
 
   const content = (
     <>
@@ -46,7 +46,7 @@ export function SecuritySummary({ breakdown, onViewBreakdown }: SecuritySummaryP
       whileHover={{ y: -2, scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
-      className={cn(className, "block w-full sm:w-auto")}
+      className={cn(className, "flex min-w-0 flex-col justify-center sm:min-w-42")}
     >
       {content}
     </motion.button>

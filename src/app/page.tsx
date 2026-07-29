@@ -1,5 +1,4 @@
 import { CategoriesSection } from "@/components/landing/CategoriesSection";
-import { CtaSection } from "@/components/landing/CtaSection";
 import { FeaturedApisSection } from "@/components/landing/FeaturedApisSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { HeroSection } from "@/components/landing/HeroSection";
@@ -18,7 +17,6 @@ export default function HomePage() {
       <HowItWorksSection />
       <FeaturedApisSection />
       <CategoriesSection />
-      <CtaSection />
     </LandingMotionShell>
   );
 }

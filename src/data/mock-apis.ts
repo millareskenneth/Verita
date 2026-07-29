@@ -5,6 +5,12 @@ import type {
   SortOption,
 } from "@/types/api";
 import type { TrustScoreBreakdown } from "@/types/security";
+import { getTrustLabel } from "@/lib/constants/trust-score";
+
+function withTrustLabel(api: ApiCatalogEntry): ApiCatalogEntry {
+  if (api.trustLabel) return api;
+  return { ...api, trustLabel: getTrustLabel(api.trustScore).trustLabel };
+}
 
 const MOCK_APIS: ApiCatalogEntry[] = [
   {
@@ -202,7 +208,7 @@ export function searchMockApis(params: ApiSearchParams = {}): ApiSearchResult {
       : true;
 
     const matchesQuery = query
-      ? [api.name, api.description, ...api.tags].some((value) =>
+      ? [api.name, api.description, api.category, ...api.tags].some((value) =>
           value.toLowerCase().includes(query),
         )
       : true;
@@ -216,7 +222,7 @@ export function searchMockApis(params: ApiSearchParams = {}): ApiSearchResult {
   const paginated = items.slice(start, start + limit);
 
   return {
-    items: paginated,
+    items: paginated.map(withTrustLabel),
     total: items.length,
     page,
     limit,
@@ -224,18 +230,25 @@ export function searchMockApis(params: ApiSearchParams = {}): ApiSearchResult {
 }
 
 export function getMockApiBySlug(slug: string): ApiCatalogEntry | null {
-  return MOCK_APIS.find((api) => api.slug === slug) ?? null;
+  const api = MOCK_APIS.find((item) => item.slug === slug);
+  return api ? withTrustLabel(api) : null;
 }
 
 export function getMockTrustScore(slug: string): TrustScoreBreakdown | null {
   const api = getMockApiBySlug(slug);
   if (!api) return null;
 
+  const trust = getTrustLabel(api.trustScore);
+
   return {
     overall: api.trustScore,
-    riskLevel: api.trustScore >= 85 ? "low" : api.trustScore >= 70 ? "medium" : "high",
-    trustLabel:
-      api.trustScore >= 85 ? "High" : api.trustScore >= 70 ? "Medium" : "Low",
+    riskLevel:
+      trust.trustLabel === "High"
+        ? "low"
+        : trust.trustLabel === "Medium"
+          ? "medium"
+          : "high",
+    trustLabel: trust.trustLabel,
     lastScannedAt: "2026-07-20T08:00:00.000Z",
     checks: [
       { id: "ssl", label: "SSL / HTTPS", status: "pass" },
@@ -244,9 +257,9 @@ export function getMockTrustScore(slug: string): TrustScoreBreakdown | null {
       {
         id: "dependencies",
         label: "Dependency audit",
-        status: api.trustScore >= 85 ? "pass" : "warning",
+        status: trust.trustLabel === "High" ? "pass" : "warning",
         detail:
-          api.trustScore >= 85
+          trust.trustLabel === "High"
             ? "No known critical vulnerabilities"
             : "1 advisory found in upstream dependency",
       },
