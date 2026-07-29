@@ -56,7 +56,6 @@ flowchart TD
     Detail --> Tester[In-browser tester]
     Detail --> Trust[Trust score panel]
     Home --> Submit["/submit Suggest API"]
-    Home --> Admin["/admin Dashboard"]
 ```
 
 ## Data flow
