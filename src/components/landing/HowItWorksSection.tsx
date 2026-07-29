@@ -1,33 +1,27 @@
 "use client";
 
-import { landingShellClass } from "@/components/landing/landing-shell";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, Shield, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-import {
-  Reveal,
-  StaggerItem,
-  StaggerReveal,
-} from "@/components/motion/Reveal";
+import { landingShellClass } from "@/components/landing/landing-shell";
+import { Reveal, StaggerItem, StaggerReveal } from "@/components/motion/Reveal";
 
 const STEPS = [
   {
-    step: 1,
-    icon: Search,
+    number: "01",
     title: "Discover",
     description:
       "Search the catalog by category, tag, or use case. Filter by trust score, license, and free status.",
   },
   {
-    step: 2,
-    icon: Zap,
+    number: "02",
     title: "Test",
     description:
       "Open any API page and fire a live request. Inspect the response, latency, and generated code snippets.",
   },
   {
-    step: 3,
-    icon: Shield,
+    number: "03",
     title: "Ship with confidence",
     description:
       "Review trust scores, security findings, and licensing before you wire the API into your app.",
@@ -35,6 +29,35 @@ const STEPS = [
 ] as const;
 
 export function HowItWorksSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / STEPS.length;
+    const index = Math.round(el.scrollLeft / cardWidth);
+    setActiveIndex(Math.min(Math.max(0, index), STEPS.length - 1));
+  }, []);
+
+  const scrollToIndex = (index: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / STEPS.length;
+    el.scrollTo({
+      left: index * cardWidth,
+      behavior: "smooth",
+    });
+    setActiveIndex(index);
+  };
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
   return (
     <section className="border-y border-border bg-muted/30">
       <div className={`${landingShellClass} py-20`}>
@@ -57,32 +80,54 @@ export function HowItWorksSection() {
         </Reveal>
 
         <div className="relative mt-16">
+          {/* Horizontal connector line on desktop */}
           <div
-            aria-hidden
-            className="pointer-events-none absolute top-7 right-[16.666%] left-[16.666%] hidden h-px bg-linear-to-r from-transparent via-primary/30 to-transparent lg:block"
+            aria-hidden="true"
+            className="pointer-events-none absolute top-8 left-[16.666%] right-[16.666%] hidden h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent lg:block z-0"
           />
 
-          <StaggerReveal className="grid gap-12 lg:grid-cols-3 lg:gap-8">
-            {STEPS.map((item) => (
-              <StaggerItem key={item.step}>
-                <div className="flex flex-col items-center text-center">
-                  <div className="relative z-10">
-                    <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
-                      <item.icon className="size-6 text-primary" strokeWidth={1.75} />
-                    </div>
-                    <span className="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground shadow-sm">
-                      {item.step}
+          {/* Mobile horizontal scroll-snap carousel / Desktop 3-column grid */}
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0"
+          >
+            <StaggerReveal className="contents">
+              {STEPS.map((item) => (
+                <StaggerItem
+                  key={item.number}
+                  className="w-[78%] shrink-0 snap-start md:w-auto md:shrink md:snap-none"
+                >
+                  <div className="group relative z-10 flex h-full flex-col rounded-2xl border border-border/60 bg-card/60 p-6 shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card hover:shadow-md dark:bg-card/40">
+                    <span className="font-display text-4xl font-bold tracking-tight text-primary sm:text-5xl">
+                      {item.number}
                     </span>
+                    <h3 className="mt-4 text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-pretty">
+                      {item.description}
+                    </p>
                   </div>
+                </StaggerItem>
+              ))}
+            </StaggerReveal>
+          </div>
 
-                  <h3 className="mt-5 text-lg font-semibold">{item.title}</h3>
-                  <p className="mt-2 max-w-[16rem] text-sm leading-6 text-muted-foreground text-pretty sm:max-w-[18rem]">
-                    {item.description}
-                  </p>
-                </div>
-              </StaggerItem>
+          {/* Pagination dots for Mobile carousel */}
+          <div className="mt-4 flex justify-center items-center gap-2 md:hidden">
+            {STEPS.map((item, idx) => (
+              <button
+                key={item.number}
+                onClick={() => scrollToIndex(idx)}
+                aria-label={`Go to step ${idx + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  activeIndex === idx
+                    ? "w-6 bg-primary"
+                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                }`}
+              />
             ))}
-          </StaggerReveal>
+          </div>
         </div>
       </div>
     </section>
