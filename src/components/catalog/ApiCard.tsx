@@ -1,42 +1,119 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
-import { Card } from "@/components/ui/Card";
-import { SecurityScoreBadge } from "@/components/api-detail/SecurityScoreBadge";
+import { ArrowUpRight } from "lucide-react";
+
+import { ReadinessBadge } from "@/components/catalog/ReadinessBadge";
+import {
+  getReadinessStatus,
+  READINESS_LABELS,
+} from "@/lib/constants/catalog-readiness";
 import { formatRelativeDate } from "@/lib/utils/format";
-import type { ApiCatalogEntry } from "@/types/api";
+import { getDisplayTrust, TRUST_VARIANT_STYLES } from "@/lib/constants/trust-score";
+import { cn } from "@/lib/utils";
+import type { ApiCatalogEntry, AuthMethod } from "@/types/api";
 
 interface ApiCardProps {
   api: ApiCatalogEntry;
 }
 
-export function ApiCard({ api }: ApiCardProps) {
+function authTagLabel(method: AuthMethod): string {
+  if (method === "none") return "no auth";
+  if (method === "api-key") return "api key";
+  if (method === "oauth") return "oauth";
+  return "basic auth";
+}
+
+function TagPill({ children }: { children: React.ReactNode }) {
   return (
-    <Link href={`/apis/${api.slug}`}>
-      <Card className="h-full transition-colors hover:border-emerald-300 dark:hover:border-emerald-700">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-              {api.name}
-            </h3>
-            <p className="mt-2 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
-              {api.description}
-            </p>
-          </div>
-          <SecurityScoreBadge score={api.trustScore} compact />
-        </div>
+    <span className="inline-flex items-center rounded-full border border-border bg-muted/40 px-2.5 py-0.5 text-xs text-muted-foreground">
+      {children}
+    </span>
+  );
+}
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Badge>{api.category}</Badge>
-          <Badge variant="muted">{api.license}</Badge>
-          <Badge variant={api.freeStatus === "free" ? "success" : "warning"}>
-            {api.freeStatus.replace("-", " ")}
-          </Badge>
-        </div>
+export function ApiCard({ api }: ApiCardProps) {
+  const isFlagged = api.freeStatus === "quarantined" || api.freeStatus === "delisted";
+  const trust = getDisplayTrust(api);
+  const trustStyles = TRUST_VARIANT_STYLES[trust.variant];
+  const endpointCount = api.endpoints.length;
+  const readiness = getReadinessStatus(api);
+  const readinessHint = READINESS_LABELS[readiness].hint;
 
-        <p className="mt-4 text-xs text-zinc-500">
-          Updated {formatRelativeDate(api.lastUpdated)}
+  return (
+    <article
+      className={cn(
+        "group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-1 hover:border-border-accent hover:shadow-md",
+        isFlagged && "border-amber-400/40 dark:border-amber-700/50",
+      )}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="min-w-0 font-display text-lg font-semibold leading-snug text-foreground">
+          {api.name}
+        </h3>
+        <span
+          className={cn(
+            "shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-medium",
+            trustStyles.badge,
+          )}
+        >
+          {trust.label}
+        </span>
+      </div>
+
+      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+        {api.description}
+      </p>
+
+      <div className="mt-3">
+        <ReadinessBadge api={api} />
+        <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{readinessHint}</p>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        <TagPill>{api.category}</TagPill>
+        <TagPill>{api.license}</TagPill>
+        <TagPill>{authTagLabel(api.authMethod)}</TagPill>
+      </div>
+
+      <div className="mt-4">
+        <div className="flex items-center justify-between gap-3 text-xs">
+          <span className="text-muted-foreground">Trust score</span>
+          <span className="font-medium text-foreground">{api.trustScore}/100</span>
+        </div>
+        <div
+          className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted"
+          role="progressbar"
+          aria-valuenow={api.trustScore}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Trust score ${api.trustScore} out of 100`}
+        >
+          <div
+            className={cn("h-full rounded-full", trustStyles.bar)}
+            style={{ width: `${api.trustScore}%` }}
+          />
+        </div>
+      </div>
+
+      <p className="mt-3 text-xs text-muted-foreground">
+        {endpointCount} endpoint{endpointCount === 1 ? "" : "s"} · updated{" "}
+        {formatRelativeDate(api.lastUpdated)}
+      </p>
+
+      {api.recommendationWarning ? (
+        <p className="mt-2 text-xs font-medium text-amber-700 dark:text-amber-300">
+          Not recommended for production use
         </p>
-      </Card>
-    </Link>
+      ) : null}
+
+      <div className="mt-auto pt-5">
+        <Link
+          href={`/apis/${api.slug}`}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background transition-colors hover:bg-foreground/90"
+        >
+          View API
+          <ArrowUpRight className="size-4" aria-hidden />
+        </Link>
+      </div>
+    </article>
   );
 }

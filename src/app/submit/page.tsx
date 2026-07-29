@@ -1,6 +1,11 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import {
+  SUBMISSION_COMPLIANCE_NOTE,
+  SUBMISSION_SECURITY_NOTE,
+} from "@/lib/constants/legal";
 
 export default function SubmitPage() {
   return (
@@ -11,6 +16,29 @@ export default function SubmitPage() {
           Phase 2 feature: submissions enter a private review queue and run
           through the same security pipeline before publication.
         </p>
+      </div>
+
+      <div className="mb-6 space-y-4">
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-4 text-sm leading-6 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300">
+          {SUBMISSION_SECURITY_NOTE}{" "}
+          <Link
+            href="/methodology"
+            className="font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+          >
+            See how scoring works
+          </Link>
+          .
+        </div>
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-4 text-sm leading-6 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300">
+          {SUBMISSION_COMPLIANCE_NOTE}{" "}
+          <Link
+            href="/terms#data-sources-and-scraping-compliance"
+            className="font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+          >
+            Read our sourcing policy
+          </Link>
+          .
+        </div>
       </div>
 
       <Card>

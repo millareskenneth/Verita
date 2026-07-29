@@ -7,7 +7,12 @@ export type LicenseType =
 
 export type AuthMethod = "none" | "api-key" | "oauth" | "basic";
 
-export type FreeStatus = "free" | "free-tier" | "under-review" | "delisted";
+export type FreeStatus =
+  | "free"
+  | "free-tier"
+  | "under-review"
+  | "quarantined"
+  | "delisted";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -16,6 +21,11 @@ export type SortOption =
   | "trust-score"
   | "last-updated"
   | "doc-completeness";
+
+export type CatalogReadinessStatus =
+  | "plug-and-play"
+  | "api-key-required"
+  | "docs-only";
 
 export interface ApiParameter {
   name: string;
@@ -32,6 +42,8 @@ export interface ApiEndpoint {
   parameters?: ApiParameter[];
 }
 
+import type { TrustLabel } from "@/types/security";
+
 export interface ApiCatalogEntry {
   id: string;
   slug: string;
@@ -45,6 +57,8 @@ export interface ApiCatalogEntry {
   sourceUrl: string;
   freeStatus: FreeStatus;
   trustScore: number;
+  trustLabel?: TrustLabel;
+  recommendationWarning?: string;
   documentationCompleteness: number;
   popularity: number;
   lastUpdated: string;
@@ -52,12 +66,14 @@ export interface ApiCatalogEntry {
   rateLimit?: string;
   requestExample?: string;
   responseExample?: string;
+  readinessStatus?: CatalogReadinessStatus;
 }
 
 export interface ApiSearchParams {
   query?: string;
   category?: string;
   sort?: SortOption;
+  readiness?: CatalogReadinessStatus;
   page?: number;
   limit?: number;
 }

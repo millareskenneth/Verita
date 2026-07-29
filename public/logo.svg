@@ -1,0 +1,36 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="verita-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#6EE7B7" />
+    </linearGradient>
+    <linearGradient id="verita-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <filter id="verita-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.33" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#verita-glow)" transform="rotate(0 100 100)">
+    <path d="M 163.75,100.00 L 131.88,155.21 L 68.13,155.21 L 36.25,100.00 L 68.12,44.79 L 131.88,44.79 Z" stroke="url(#verita-grad-1)" stroke-width="1.82" fill="none" />
+    <path d="M 145.90,100.00 L 122.95,139.75 L 77.05,139.75 L 54.10,100.00 L 77.05,60.25 L 122.95,60.25 Z" stroke="url(#verita-grad-2)" stroke-width="1.26" fill="none" />
+    <path d="M 126.78,100.00 L 113.39,123.19 L 86.61,123.19 L 73.22,100.00 L 86.61,76.81 L 113.39,76.81 Z" stroke="url(#verita-grad-1)" stroke-width="1.54" fill="none" />
+    <line x1="163.75" y1="100" x2="113.3875" y2="123.18783018632834" stroke="url(#verita-grad-2)" stroke-width="0.98" opacity="0.7" />
+    <line x1="131.875" y1="155.20911949125795" x2="86.61250000000001" y2="123.18783018632834" stroke="url(#verita-grad-2)" stroke-width="0.98" opacity="0.7" />
+    <line x1="68.12500000000001" y1="155.20911949125798" x2="73.225" y2="100" stroke="url(#verita-grad-2)" stroke-width="0.98" opacity="0.7" />
+    <line x1="36.25" y1="100.00000000000001" x2="86.61249999999998" y2="76.81216981367166" stroke="url(#verita-grad-2)" stroke-width="0.98" opacity="0.7" />
+    <line x1="68.12499999999997" y1="44.79088050874205" x2="113.3875" y2="76.81216981367166" stroke="url(#verita-grad-2)" stroke-width="0.98" opacity="0.7" />
+    <line x1="131.875" y1="44.79088050874204" x2="126.775" y2="100" stroke="url(#verita-grad-2)" stroke-width="0.98" opacity="0.7" />
+    <circle cx="163.75" cy="100" r="2.5" fill="#10B981" />
+    <circle cx="131.875" cy="155.20911949125795" r="2.5" fill="#10B981" />
+    <circle cx="68.12500000000001" cy="155.20911949125798" r="2.5" fill="#10B981" />
+    <circle cx="36.25" cy="100.00000000000001" r="2.5" fill="#10B981" />
+    <circle cx="68.12499999999997" cy="44.79088050874205" r="2.5" fill="#10B981" />
+    <circle cx="131.875" cy="44.79088050874204" r="2.5" fill="#10B981" />
+  </g>
+</svg>
